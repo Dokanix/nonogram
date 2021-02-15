@@ -1,4 +1,4 @@
-class Nonogram {
+export default class Nonogram {
   #solution;
   #board;
   #rowHelpers;
@@ -309,11 +309,3 @@ let solution = [
   [true, false, false, false, false],
   [false, true, true, true, true],
 ];
-
-const nono = Nonogram.random(2, 2);
-nono.check(0, 1);
-nono.printSolution();
-nono.printBoard();
-console.log(nono.isSolved());
-
-export default Nonogram;
