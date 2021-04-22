@@ -5,7 +5,7 @@ describe('Regex', () => {
     expect(Nonogram.validUrl('5&4&abscag')).toBeTruthy();
   });
 
-  test('allows invalid URL', () => {
+  test('disallows invalid URL', () => {
     expect(Nonogram.validUrl('&3&46036')).not.toBeTruthy();
   });
 });
