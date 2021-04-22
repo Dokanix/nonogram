@@ -1,0 +1,36 @@
+{
+  "name": "nonogram",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/script.ts",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "ts-node": "^9.1.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.22",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.5.5",
+    "typescript": "^4.2.4"
+  },
+  "scripts": {
+    "start": "nodemon src/script.ts",
+    "test": "jest --verbose"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dokanix/nonogram.git"
+  },
+  "author": "Dominik Piotrowicz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dokanix/nonogram/issues"
+  },
+  "homepage": "https://github.com/Dokanix/nonogram#readme",
+  "jest": {
+    "testEnvironment": "node",
+    "preset": "ts-jest"
+  }
+}
