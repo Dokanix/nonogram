@@ -88,7 +88,7 @@ const renderLevel = () => {
       element.classList.remove('unknown');
       element.classList.toggle('checked');
 
-      nono.check(column, row);
+      nono.toggle(column, row);
     }
 
     nono.printBoard();
