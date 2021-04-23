@@ -1,10 +1,7 @@
 import Nonogram from './nonogram.js';
 
-const randomLevelButton = document.querySelector(
-  '#random'
-) as HTMLButtonElement;
-
-const bodyElement = document.querySelector('body')!;
+const containerElement = document.querySelector('.container')!;
+const backElement = document.querySelector('.back')!;
 
 const renderLevel = () => {
   const randomWidth = Math.floor(Math.random() * 8) + 2;
@@ -96,7 +93,10 @@ const renderLevel = () => {
 
     nono.printBoard();
     if (nono.solved) {
-      console.log('Congratulations!');
+      const congratulationsElement = document.createElement('h1');
+      congratulationsElement.innerText = 'Congratulations!';
+
+      containerElement.appendChild(congratulationsElement);
     }
   });
 
@@ -117,8 +117,45 @@ const renderLevel = () => {
     nono.printBoard();
   });
 
-  bodyElement.innerHTML = '';
-  bodyElement.appendChild(gameElement);
+  containerElement.innerHTML = '';
+  containerElement.appendChild(gameElement);
+
+  backElement.classList.remove('hidden');
 };
 
-randomLevelButton.addEventListener('click', renderLevel);
+const renderMenu = () => {
+  const menuElement = document.createElement('div');
+  menuElement.classList.add('menu');
+
+  const randomButton = document.createElement('button');
+  randomButton.id = 'random';
+  randomButton.classList.add('menu__button');
+  randomButton.textContent = 'Losowy';
+
+  randomButton.addEventListener('click', renderLevel);
+
+  menuElement.appendChild(randomButton);
+
+  const levelsButton = document.createElement('button');
+  levelsButton.id = 'levels';
+  levelsButton.classList.add('menu__button');
+  levelsButton.textContent = 'Poziomy';
+
+  menuElement.appendChild(levelsButton);
+
+  const editorButton = document.createElement('button');
+  editorButton.id = 'levels';
+  editorButton.classList.add('menu__button');
+  editorButton.textContent = 'Edytor';
+
+  menuElement.appendChild(editorButton);
+
+  containerElement.innerHTML = '';
+  containerElement.appendChild(menuElement);
+
+  backElement.classList.add('hidden');
+};
+
+backElement.addEventListener('click', renderMenu);
+
+renderMenu();
