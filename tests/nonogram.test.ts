@@ -17,11 +17,10 @@ describe('Board', () => {
     nono = new Nonogram([
       [false, false, false],
       [true, false, false],
-      [false, false, false],
     ]);
   });
 
-  test('knows when its solved', () => {
+  test('knows when it is solved', () => {
     nono.check(0, 1);
 
     expect(nono.solved).toBeTruthy();
@@ -29,6 +28,10 @@ describe('Board', () => {
 
   test('knows when it is not solved', () => {
     expect(nono.solved).not.toBeTruthy();
+  });
+
+  test('knows its own dimensions', () => {
+    expect(nono.size).toEqual([3, 2]);
   });
 });
 

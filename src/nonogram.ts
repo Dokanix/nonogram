@@ -1,3 +1,8 @@
+interface Helpers {
+  rowHelpers: number[][];
+  columnHelpers: number[][];
+}
+
 export default class Nonogram {
   private solution: boolean[][] = [];
   private board: boolean[][] = [];
@@ -19,6 +24,31 @@ export default class Nonogram {
       }
     }
     return true;
+  }
+
+  get size(): [number, number] {
+    return [this.width, this.height];
+  }
+
+  get cells(): boolean[][] {
+    const board = Array(this.height)
+      .fill(null)
+      .map(() => Array(this.width)) as boolean[][];
+
+    for (let [rowIndex, rowValue] of this.solution.entries()) {
+      for (let [columnIndex, columnValue] of rowValue.entries()) {
+        board[rowIndex][columnIndex] = columnValue;
+      }
+    }
+
+    return board;
+  }
+
+  get helpers(): Helpers {
+    return {
+      rowHelpers: this.rowHelpers,
+      columnHelpers: this.columnHelpers,
+    };
   }
 
   private validateSize(width: number, height: number = 5): void {
@@ -202,7 +232,7 @@ export default class Nonogram {
     this.print(this.board);
   }
 
-  check(column: number, row: number): void {
+  toggle(column: number, row: number): void {
     if (row < 0 || row >= this.height || column < 0 || column >= this.width) {
       throw new Error(
         `Invalid argument. Index must be bigger than 0 and smaller than the dimension length.`
@@ -210,6 +240,26 @@ export default class Nonogram {
     }
 
     this.board[row][column] = !this.board[row][column];
+  }
+
+  check(column: number, row: number): void {
+    if (row < 0 || row >= this.height || column < 0 || column >= this.width) {
+      throw new Error(
+        `Invalid argument. Index must be bigger than 0 and smaller than the dimension length.`
+      );
+    }
+
+    this.board[row][column] = true;
+  }
+
+  uncheck(column: number, row: number): void {
+    if (row < 0 || row >= this.height || column < 0 || column >= this.width) {
+      throw new Error(
+        `Invalid argument. Index must be bigger than 0 and smaller than the dimension length.`
+      );
+    }
+
+    this.board[row][column] = false;
   }
 
   encode(): string {
@@ -246,7 +296,7 @@ export default class Nonogram {
 
     let solution: boolean[][] = Array(height)
       .fill(null)
-      .map((x) => []);
+      .map(() => []);
 
     for (let i = 0; i < height; i++) {
       for (let j = 0; j < width; j++) {
