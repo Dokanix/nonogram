@@ -214,6 +214,10 @@ body > * {
   box-shadow: 0.2rem 0.2rem 0.8rem rgba(165, 65, 65, 0.2);
 }
 
+.solved {
+  opacity: 0.5;
+}
+
 h1 {
   text-align: center;
 }

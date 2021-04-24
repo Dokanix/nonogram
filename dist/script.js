@@ -46,6 +46,7 @@ const createBoardElement = (nono) => {
             if (nono.solvedRow(row)) {
                 const rowElements = document.querySelectorAll(`[data-row="${row}"`);
                 rowElements.forEach((elem) => {
+                    elem.classList.add('solved');
                     if (!elem.classList.contains('checked')) {
                         elem.classList.add('unknown');
                     }
@@ -54,6 +55,7 @@ const createBoardElement = (nono) => {
             if (nono.solvedColumn(column)) {
                 const columnElements = document.querySelectorAll(`[data-column="${column}"]`);
                 columnElements.forEach((elem) => {
+                    elem.classList.add('solved');
                     if (!elem.classList.contains('checked')) {
                         elem.classList.add('unknown');
                     }

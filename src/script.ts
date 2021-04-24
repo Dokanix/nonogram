@@ -66,6 +66,7 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
         const rowElements = document.querySelectorAll(`[data-row="${row}"`);
 
         rowElements.forEach((elem) => {
+          elem.classList.add('solved');
           if (!elem.classList.contains('checked')) {
             elem.classList.add('unknown');
           }
@@ -78,6 +79,7 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
         );
 
         columnElements.forEach((elem) => {
+          elem.classList.add('solved');
           if (!elem.classList.contains('checked')) {
             elem.classList.add('unknown');
           }
