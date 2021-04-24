@@ -1,6 +1,6 @@
 interface Helpers {
-  rowHelpers: number[][];
-  columnHelpers: number[][];
+  row: number[][];
+  column: number[][];
 }
 
 export default class Nonogram {
@@ -46,8 +46,8 @@ export default class Nonogram {
 
   get helpers(): Helpers {
     return {
-      rowHelpers: this.rowHelpers,
-      columnHelpers: this.columnHelpers,
+      row: this.rowHelpers,
+      column: this.columnHelpers,
     };
   }
 

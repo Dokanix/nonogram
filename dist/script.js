@@ -1,51 +1,60 @@
 import Nonogram from './nonogram.js';
 const containerElement = document.querySelector('.container');
 const backElement = document.querySelector('.back');
-const renderLevel = () => {
-    const randomWidth = Math.floor(Math.random() * 8) + 2;
-    const randomHeight = Math.floor(Math.random() * 8) + 2;
-    const nono = Nonogram.random(randomWidth, randomHeight);
-    console.log(nono.helpers.columnHelpers);
-    console.log(nono.helpers.rowHelpers);
-    nono.printBoard();
-    console.log(nono.size);
-    const gameElement = document.createElement('div');
-    gameElement.classList.add('game');
-    const columnHelpersElement = document.createElement('div');
-    columnHelpersElement.classList.add('columnHelpers');
-    for (let i = 0; i < randomWidth; i++) {
-        const columnHelperElement = document.createElement('div');
-        columnHelperElement.classList.add('columnHelper');
-        const columnHelper = nono.helpers.columnHelpers[i];
-        for (let j = 0; j < columnHelper.length; j++) {
+const createHelperElement = (nono, axis) => {
+    const helpersElement = document.createElement('div');
+    helpersElement.classList.add(`${axis}Helpers`);
+    const width = nono.helpers[axis].length;
+    for (let i = 0; i < width; i++) {
+        const helperElement = document.createElement('div');
+        helperElement.classList.add(`${axis}Helper`);
+        const helper = axis === 'column' ? nono.helpers.column[i] : nono.helpers.row[i];
+        for (let j = 0; j < helper.length; j++) {
             const numberElement = document.createElement('div');
             numberElement.classList.add('number');
-            numberElement.textContent = String(columnHelper[j]);
-            columnHelperElement.appendChild(numberElement);
+            numberElement.textContent = String(helper[j]);
+            helperElement.appendChild(numberElement);
         }
-        columnHelpersElement.appendChild(columnHelperElement);
+        helpersElement.appendChild(helperElement);
     }
-    gameElement.appendChild(columnHelpersElement);
-    const rowHelpersElement = document.createElement('div');
-    rowHelpersElement.classList.add('rowHelpers');
-    for (let i = 0; i < randomHeight; i++) {
-        const rowHelperElement = document.createElement('div');
-        rowHelperElement.classList.add('rowHelper');
-        const rowHelper = nono.helpers.rowHelpers[i];
-        for (let j = 0; j < rowHelper.length; j++) {
-            const numberElement = document.createElement('div');
-            numberElement.classList.add('number');
-            numberElement.textContent = String(rowHelper[j]);
-            rowHelperElement.appendChild(numberElement);
+    return helpersElement;
+};
+const createCongratulationsElement = () => {
+    const congratulationsElement = document.createElement('h1');
+    congratulationsElement.innerText = 'Congratulations!';
+    return congratulationsElement;
+};
+const createBoardElement = (nono) => {
+    const handleClick = (event, state) => {
+        event.preventDefault();
+        const element = event.target;
+        if (element.classList.contains('cell')) {
+            const column = Number(element.dataset.column);
+            const row = Number(element.dataset.row);
+            if (state === 'checked') {
+                new Audio('../static/left.m4a').play();
+                element.classList.remove('unknown');
+                element.classList.toggle('checked');
+                nono.toggle(column, row);
+            }
+            else {
+                new Audio('../static/right.m4a').play();
+                element.classList.remove('checked');
+                element.classList.toggle('unknown');
+                nono.uncheck(column, row);
+            }
         }
-        rowHelpersElement.appendChild(rowHelperElement);
-    }
-    gameElement.appendChild(rowHelpersElement);
+        if (nono.solved) {
+            new Audio('../static/win.m4a').play();
+            containerElement.appendChild(createCongratulationsElement());
+        }
+    };
+    const [width, height] = nono.size;
     const boardElement = document.createElement('div');
     boardElement.classList.add('board');
-    boardElement.style.gridTemplateColumns = `repeat(${randomWidth}, 1fr)`;
-    for (let i = 0; i < randomHeight; i++) {
-        for (let j = 0; j < randomWidth; j++) {
+    boardElement.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
+    for (let i = 0; i < height; i++) {
+        for (let j = 0; j < width; j++) {
             const cellElement = document.createElement('div');
             cellElement.classList.add('cell');
             cellElement.dataset.column = String(j);
@@ -53,60 +62,50 @@ const renderLevel = () => {
             boardElement.appendChild(cellElement);
         }
     }
-    gameElement.appendChild(boardElement);
     boardElement.addEventListener('click', (e) => {
-        const element = e.target;
-        const column = Number(element.dataset.column);
-        const row = Number(element.dataset.row);
-        if (element.classList.contains('cell')) {
-            element.classList.remove('unknown');
-            element.classList.toggle('checked');
-            nono.toggle(column, row);
-        }
-        nono.printBoard();
-        if (nono.solved) {
-            const congratulationsElement = document.createElement('h1');
-            congratulationsElement.innerText = 'Congratulations!';
-            containerElement.appendChild(congratulationsElement);
-        }
+        handleClick(e, 'checked');
     });
     boardElement.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        const element = e.target;
-        const column = Number(element.dataset.column);
-        const row = Number(element.dataset.row);
-        if (element.classList.contains('cell')) {
-            element.classList.remove('checked');
-            element.classList.toggle('unknown');
-            nono.uncheck(column, row);
-        }
-        nono.printBoard();
+        handleClick(e, 'unknown');
     });
+    return boardElement;
+};
+const createGameElement = (nono) => {
+    const gameElement = document.createElement('div');
+    gameElement.classList.add('game');
+    gameElement.appendChild(createHelperElement(nono, 'column'));
+    gameElement.appendChild(createHelperElement(nono, 'row'));
+    gameElement.appendChild(createBoardElement(nono));
+    return gameElement;
+};
+const createButtonElement = (text, callback) => {
+    const button = document.createElement('button');
+    button.classList.add('menu__button');
+    button.textContent = text;
+    if (callback) {
+        button.addEventListener('click', callback);
+    }
+    return button;
+};
+const createMenuElement = () => {
+    const menuElement = document.createElement('div');
+    menuElement.classList.add('menu');
+    menuElement.appendChild(createButtonElement('Losowy', renderLevel));
+    menuElement.appendChild(createButtonElement('Poziomy'));
+    menuElement.appendChild(createButtonElement('Edytor'));
+    return menuElement;
+};
+const renderLevel = () => {
+    const randomWidth = Math.floor(Math.random() * 8) + 2;
+    const randomHeight = Math.floor(Math.random() * 8) + 2;
+    const nono = Nonogram.random(randomWidth, randomHeight);
     containerElement.innerHTML = '';
-    containerElement.appendChild(gameElement);
+    containerElement.appendChild(createGameElement(nono));
     backElement.classList.remove('hidden');
 };
 const renderMenu = () => {
-    const menuElement = document.createElement('div');
-    menuElement.classList.add('menu');
-    const randomButton = document.createElement('button');
-    randomButton.id = 'random';
-    randomButton.classList.add('menu__button');
-    randomButton.textContent = 'Losowy';
-    randomButton.addEventListener('click', renderLevel);
-    menuElement.appendChild(randomButton);
-    const levelsButton = document.createElement('button');
-    levelsButton.id = 'levels';
-    levelsButton.classList.add('menu__button');
-    levelsButton.textContent = 'Poziomy';
-    menuElement.appendChild(levelsButton);
-    const editorButton = document.createElement('button');
-    editorButton.id = 'levels';
-    editorButton.classList.add('menu__button');
-    editorButton.textContent = 'Edytor';
-    menuElement.appendChild(editorButton);
     containerElement.innerHTML = '';
-    containerElement.appendChild(menuElement);
+    containerElement.appendChild(createMenuElement());
     backElement.classList.add('hidden');
 };
 backElement.addEventListener('click', renderMenu);

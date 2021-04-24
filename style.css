@@ -1,22 +1,28 @@
 html {
   font-size: 62.5%;
   --color-dark: rgba(0, 0, 50);
-  --color-light: rgba(255, 255, 225);
+  --color-light: rgba(255, 255, 248);
   --color-white: white;
   font-family: 'Merienda', cursive;
 }
 
 body {
   height: 100vh;
-  margin: 0.8rem;
-  padding: 0;
+  padding: 0.8rem;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body > * {
+  box-sizing: inherit;
 }
 
 .back {
   position: absolute;
   font-size: 2.4rem;
-  left: 2.4rem;
-  top: 2.4rem;
+  left: 9.6rem;
+  top: 9.6rem;
+  transition: transform 0.1s;
 }
 
 .hidden {
@@ -166,7 +172,6 @@ body {
 }
 
 .number {
-  font-family: sans-serif;
   font-weight: bold;
   font-size: 2.4rem;
   margin: 0.8rem;
@@ -179,25 +184,34 @@ body {
 .board {
   display: grid;
   grid-area: game;
-  gap: 0.4rem;
+  gap: 0.8rem;
   grid-template-columns: repeat(4, 1fr);
 }
 
 .cell {
+  overflow: hidden;
+  position: relative;
   box-sizing: border-box;
-  border: 1px solid black;
-  width: 100px;
+  box-shadow: 0.2rem 0.2rem 0.8rem rgba(0, 0, 0, 0.1);
+  width: 10rem;
   cursor: pointer;
   aspect-ratio: 1;
-  border-radius: 0.2rem;
+  border-radius: 0.4rem;
+  transition: filter 0.1s, transform 0.1s;
+}
+
+.cell:hover {
+  transform: scale(1.05);
 }
 
 .checked {
-  background-color: var(--color-dark);
+  background: #404040;
+  box-shadow: inset 5px 5px 10px #353535, inset -5px -5px 10px #4b4b4b;
 }
 
 .unknown {
-  background-color: lightgray;
+  background: #ff6161;
+  box-shadow: 0.2rem 0.2rem 0.8rem rgba(165, 65, 65, 0.2);
 }
 
 h1 {

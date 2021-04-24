@@ -34,8 +34,8 @@ export default class Nonogram {
     }
     get helpers() {
         return {
-            rowHelpers: this.rowHelpers,
-            columnHelpers: this.columnHelpers,
+            row: this.rowHelpers,
+            column: this.columnHelpers,
         };
     }
     validateSize(width, height = 5) {
