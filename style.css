@@ -315,3 +315,15 @@ body > * {
   color: var(--color-white);
   background-color: var(--color-green);
 }
+
+.modal__button--exit {
+  position: absolute;
+  right: 1.6rem;
+  top: 1.6rem;
+  color: gray;
+}
+
+.modal__button--exit:hover,
+.modal__button--exit:focus {
+  color: var(--color-green);
+}

@@ -24,6 +24,12 @@ document.addEventListener('wheel', (e) => {
 const getElementPosition = (element) => {
     return [Number(element.dataset.row), Number(element.dataset.column)];
 };
+const removeElement = (query) => {
+    const element = document.querySelector(query);
+    if (element) {
+        element.remove();
+    }
+};
 const createHelperElement = (nono, axis) => {
     const helpersElement = document.createElement('div');
     helpersElement.classList.add(`${axis}Helpers`);
@@ -47,7 +53,15 @@ const createModal = (timeElapsed) => {
     modalElement.classList.add('modal');
     const modalBodyElement = document.createElement('div');
     modalBodyElement.classList.add('modal__body');
+    const modalExitButton = createButtonElement('X', () => {
+        removeElement('.modal');
+    });
+    modalExitButton.classList.add('modal__button--exit');
+    modalExitButton.classList.add('modal__button');
+    modalExitButton.textContent = 'X';
+    modalBodyElement.appendChild(modalExitButton);
     const modalHeaderElement = document.createElement('h1');
+    modalHeaderElement.classList.add('modal__header');
     modalHeaderElement.textContent = 'Congratulations! 🎉';
     modalBodyElement.appendChild(modalHeaderElement);
     const modalTextElement = document.createElement('p');
