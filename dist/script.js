@@ -24,43 +24,43 @@ const createCongratulationsElement = () => {
     congratulationsElement.innerText = 'Congratulations!';
     return congratulationsElement;
 };
+const handleSolvedAxis = (row, axis) => {
+    new Audio('static/axis.m4a').play();
+    const rowElements = document.querySelectorAll(`[data-${axis}="${row}"`);
+    rowElements.forEach((elem) => {
+        elem.classList.add('solved');
+        if (!elem.classList.contains('checked')) {
+            elem.classList.add('unknown');
+        }
+    });
+};
 const createBoardElement = (nono) => {
-    const handleClick = (event, state) => {
+    const handleClick = (event, action) => {
         event.preventDefault();
         const element = event.target;
-        if (element.classList.contains('cell')) {
-            const column = Number(element.dataset.column);
-            const row = Number(element.dataset.row);
-            if (state === 'check') {
-                new Audio('static/left.m4a').play();
-                element.classList.remove('unknown');
-                element.classList.toggle('checked');
-                nono.toggle(column, row);
-            }
-            else {
-                new Audio('static/right.m4a').play();
-                element.classList.remove('checked');
-                element.classList.toggle('unknown');
-                nono.uncheck(column, row);
-            }
+        if (!element.classList.contains('cell') ||
+            element.classList.contains('solved')) {
+            return;
+        }
+        const column = Number(element.dataset.column);
+        const row = Number(element.dataset.row);
+        if (action === 'check') {
+            new Audio('static/left.m4a').play();
+            element.classList.remove('unknown');
+            element.classList.toggle('checked');
+            nono.toggle(column, row);
             if (nono.solvedRow(row)) {
-                const rowElements = document.querySelectorAll(`[data-row="${row}"`);
-                rowElements.forEach((elem) => {
-                    elem.classList.add('solved');
-                    if (!elem.classList.contains('checked')) {
-                        elem.classList.add('unknown');
-                    }
-                });
+                handleSolvedAxis(row, 'row');
             }
             if (nono.solvedColumn(column)) {
-                const columnElements = document.querySelectorAll(`[data-column="${column}"]`);
-                columnElements.forEach((elem) => {
-                    elem.classList.add('solved');
-                    if (!elem.classList.contains('checked')) {
-                        elem.classList.add('unknown');
-                    }
-                });
+                handleSolvedAxis(column, 'column');
             }
+        }
+        else {
+            new Audio('static/right.m4a').play();
+            element.classList.remove('checked');
+            element.classList.toggle('unknown');
+            nono.uncheck(column, row);
         }
         if (nono.solved) {
             new Audio('static/win.m4a').play();
@@ -108,9 +108,9 @@ const createButtonElement = (text, callback) => {
 const createMenuElement = () => {
     const menuElement = document.createElement('div');
     menuElement.classList.add('menu');
-    menuElement.appendChild(createButtonElement('Losowy', renderLevel));
-    menuElement.appendChild(createButtonElement('Poziomy'));
-    menuElement.appendChild(createButtonElement('Edytor'));
+    menuElement.appendChild(createButtonElement('Random', renderLevel));
+    menuElement.appendChild(createButtonElement('Levels'));
+    menuElement.appendChild(createButtonElement('Editor'));
     return menuElement;
 };
 const renderLevel = () => {

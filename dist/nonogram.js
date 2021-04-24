@@ -30,23 +30,13 @@ export default class Nonogram {
         return true;
     }
     solvedRow(row) {
-        const helpers = this.rowHelpers[row];
-        const current = [];
-        let nextValue = true;
-        for (let value of this.board[row]) {
-            const lastIndex = current.length - 1;
-            if (value && nextValue) {
-                current.push(1);
-                nextValue = false;
-            }
-            else if (value) {
-                current[lastIndex] = current[lastIndex] + 1;
-            }
-            else {
-                nextValue = true;
+        const solvedRow = this.solution[row];
+        for (const [cellIndex, cell] of solvedRow.entries()) {
+            if (cell !== this.board[row][cellIndex]) {
+                return false;
             }
         }
-        return equals(helpers, current);
+        return true;
     }
     solvedColumn(column) {
         const helpers = this.columnHelpers[column];

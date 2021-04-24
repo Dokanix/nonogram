@@ -18,6 +18,7 @@ body > * {
 }
 
 .back {
+  text-transform: uppercase;
   position: absolute;
   font-size: 2.4rem;
   left: 9.6rem;

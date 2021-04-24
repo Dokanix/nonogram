@@ -41,24 +41,15 @@ export default class Nonogram {
   }
 
   solvedRow(row: number): boolean {
-    const helpers = this.rowHelpers[row];
-    const current: number[] = [];
-    let nextValue = true;
+    const solvedRow = this.solution[row];
 
-    for (let value of this.board[row]) {
-      const lastIndex = current.length - 1;
-
-      if (value && nextValue) {
-        current.push(1);
-        nextValue = false;
-      } else if (value) {
-        current[lastIndex] = current[lastIndex] + 1;
-      } else {
-        nextValue = true;
+    for (const [cellIndex, cell] of solvedRow.entries()) {
+      if (cell !== this.board[row][cellIndex]) {
+        return false;
       }
     }
 
-    return equals(helpers, current);
+    return true;
   }
 
   solvedColumn(column: number): boolean {
