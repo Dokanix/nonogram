@@ -46,7 +46,7 @@ const createHelperElement = (nono, axis) => {
     }
     return helpersElement;
 };
-const createModal = (timeElapsed) => {
+const createModal = (header, text) => {
     const modalElement = document.createElement('div');
     modalElement.classList.add('modal');
     const modalBodyElement = document.createElement('div');
@@ -60,12 +60,22 @@ const createModal = (timeElapsed) => {
     modalBodyElement.appendChild(modalExitButton);
     const modalHeaderElement = document.createElement('h1');
     modalHeaderElement.classList.add('modal__header');
-    modalHeaderElement.textContent = 'Congratulations! 🎉';
+    modalHeaderElement.textContent = header;
     modalBodyElement.appendChild(modalHeaderElement);
-    const modalTextElement = document.createElement('p');
-    modalTextElement.classList.add('modal__text');
-    modalTextElement.innerHTML = `You have completed the level in <span class="modal__time">${timeElapsed}</span> seconds.`;
-    modalBodyElement.appendChild(modalTextElement);
+    if (text) {
+        const modalTextElement = document.createElement('p');
+        modalTextElement.classList.add('modal__text');
+        modalTextElement.innerHTML = text;
+        modalBodyElement.appendChild(modalTextElement);
+    }
+    modalElement.appendChild(modalBodyElement);
+    return modalElement;
+};
+const createWinModal = (timeElapsed) => {
+    const header = 'Congratulations! 🎉';
+    const text = `You have completed the level in <span class='modal__time'>${timeElapsed}</span> seconds.`;
+    const modalElement = createModal(header, text);
+    const modalBodyElement = modalElement.querySelector('.modal__body');
     const modalButtonsElement = document.createElement('div');
     modalButtonsElement.classList.add('modal__buttons');
     const modalSecondaryButton = createButtonElement('Reset', renderLevel);
@@ -78,6 +88,35 @@ const createModal = (timeElapsed) => {
     modalButtonsElement.appendChild(modalPrimaryButton);
     modalBodyElement.appendChild(modalButtonsElement);
     modalElement.appendChild(modalBodyElement);
+    return modalElement;
+};
+const createNumberInput = (name) => {
+    const element = document.createElement('input');
+    element.classList.add('modal__input');
+    element.type = 'number';
+    element.placeholder = name;
+    element.min = '2';
+    element.max = '10';
+    return element;
+};
+const createPlayModal = () => {
+    const modalElement = createModal('Level Settings');
+    const modalBodyElement = modalElement.querySelector('.modal__body');
+    const widthInput = createNumberInput('Width');
+    const heightInput = createNumberInput('Height');
+    modalBodyElement.appendChild(widthInput);
+    modalBodyElement.appendChild(heightInput);
+    const modalButtonsElement = document.createElement('div');
+    modalButtonsElement.classList.add('modal__buttons');
+    const modalPrimaryButton = createButtonElement('Play', () => {
+        const width = Number(widthInput.value);
+        const height = Number(heightInput.value);
+        renderLevel(width, height);
+    });
+    modalPrimaryButton.classList.add('modal__button');
+    modalPrimaryButton.classList.add('modal__button--primary');
+    modalButtonsElement.appendChild(modalPrimaryButton);
+    modalBodyElement.appendChild(modalButtonsElement);
     return modalElement;
 };
 const handleSolvedAxis = (row, axis) => {
@@ -110,7 +149,7 @@ const createBoardElement = (nono) => {
         if (nono.solved) {
             const totalTime = Math.floor((new Date().getTime() - startTime) / 1000);
             new Audio('static/win.m4a').play();
-            containerElement.appendChild(createModal(totalTime));
+            containerElement.appendChild(createWinModal(totalTime));
             const focusTarget = document.querySelector('.modal__button--secondary');
             focusTarget.focus();
         }
@@ -255,16 +294,21 @@ const createMenuButtonElement = (text, callback) => {
 const createMenuElement = () => {
     const menuElement = document.createElement('div');
     menuElement.classList.add('menu');
-    menuElement.appendChild(createMenuButtonElement('Random', renderLevel));
+    menuElement.appendChild(createMenuButtonElement('Random', () => {
+        renderLevel();
+    }));
+    menuElement.appendChild(createMenuButtonElement('Custom', () => {
+        containerElement.appendChild(createPlayModal());
+    }));
     menuElement.appendChild(createMenuButtonElement('Levels'));
     menuElement.appendChild(createMenuButtonElement('Editor'));
     return menuElement;
 };
-const renderLevel = () => {
+const renderLevel = (width, height) => {
     currentScale = 1;
-    const randomWidth = Math.floor(Math.random() * 8) + 2;
-    const randomHeight = Math.floor(Math.random() * 8) + 2;
-    const nono = Nonogram.random(randomWidth, randomHeight);
+    width = width !== null && width !== void 0 ? width : Math.floor(Math.random() * 8) + 2;
+    height = height !== null && height !== void 0 ? height : Math.floor(Math.random() * 8) + 2;
+    const nono = Nonogram.random(width, height);
     containerElement.innerHTML = '';
     containerElement.appendChild(createBackButtonElement(renderMenu));
     containerElement.appendChild(createGameElement(nono));
