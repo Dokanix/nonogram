@@ -1,0 +1,946 @@
+// modules are defined as an array
+// [ module function, map of requires ]
+//
+// map of requires is short require name -> numeric require
+//
+// anything defined in a previous bundle is accessed via the
+// orig method which is the require for previous bundles
+
+(function(modules, entry, mainEntry, parcelRequireName, globalName) {
+  /* eslint-disable no-undef */
+  var globalObject =
+    typeof globalThis !== 'undefined'
+      ? globalThis
+      : typeof self !== 'undefined'
+      ? self
+      : typeof window !== 'undefined'
+      ? window
+      : typeof global !== 'undefined'
+      ? global
+      : {};
+  /* eslint-enable no-undef */
+
+  // Save the require from previous bundle to this closure if any
+  var previousRequire =
+    typeof globalObject[parcelRequireName] === 'function' &&
+    globalObject[parcelRequireName];
+
+  var cache = previousRequire.cache || {};
+  // Do not use `require` to prevent Webpack from trying to bundle this call
+  var nodeRequire =
+    typeof module !== 'undefined' &&
+    typeof module.require === 'function' &&
+    module.require.bind(module);
+
+  function newRequire(name, jumped) {
+    if (!cache[name]) {
+      if (!modules[name]) {
+        // if we cannot find the module within our internal map or
+        // cache jump to the current global require ie. the last bundle
+        // that was added to the page.
+        var currentRequire =
+          typeof globalObject[parcelRequireName] === 'function' &&
+          globalObject[parcelRequireName];
+        if (!jumped && currentRequire) {
+          return currentRequire(name, true);
+        }
+
+        // If there are other bundles on this page the require from the
+        // previous one is saved to 'previousRequire'. Repeat this as
+        // many times as there are bundles until the module is found or
+        // we exhaust the require chain.
+        if (previousRequire) {
+          return previousRequire(name, true);
+        }
+
+        // Try the node require function if it exists.
+        if (nodeRequire && typeof name === 'string') {
+          return nodeRequire(name);
+        }
+
+        var err = new Error("Cannot find module '" + name + "'");
+        err.code = 'MODULE_NOT_FOUND';
+        throw err;
+      }
+
+      localRequire.resolve = resolve;
+      localRequire.cache = {};
+
+      var module = (cache[name] = new newRequire.Module(name));
+
+      modules[name][0].call(
+        module.exports,
+        localRequire,
+        module,
+        module.exports,
+        this
+      );
+    }
+
+    return cache[name].exports;
+
+    function localRequire(x) {
+      return newRequire(localRequire.resolve(x));
+    }
+
+    function resolve(x) {
+      return modules[name][1][x] || x;
+    }
+  }
+
+  function Module(moduleName) {
+    this.id = moduleName;
+    this.bundle = newRequire;
+    this.exports = {};
+  }
+
+  newRequire.isParcelRequire = true;
+  newRequire.Module = Module;
+  newRequire.modules = modules;
+  newRequire.cache = cache;
+  newRequire.parent = previousRequire;
+  newRequire.register = function(id, exports) {
+    modules[id] = [
+      function(require, module) {
+        module.exports = exports;
+      },
+      {},
+    ];
+  };
+
+  Object.defineProperty(newRequire, 'root', {
+    get: function() {
+      return globalObject[parcelRequireName];
+    },
+  });
+
+  globalObject[parcelRequireName] = newRequire;
+
+  for (var i = 0; i < entry.length; i++) {
+    newRequire(entry[i]);
+  }
+
+  if (mainEntry) {
+    // Expose entry point to Node, AMD or browser globals
+    // Based on https://github.com/ForbesLindesay/umd/blob/master/template.js
+    var mainExports = newRequire(mainEntry);
+
+    // CommonJS
+    if (typeof exports === 'object' && typeof module !== 'undefined') {
+      module.exports = mainExports;
+
+      // RequireJS
+    } else if (typeof define === 'function' && define.amd) {
+      define(function() {
+        return mainExports;
+      });
+
+      // <script>
+    } else if (globalName) {
+      this[globalName] = mainExports;
+    }
+  }
+})({"1AUpZ":[function(require,module,exports) {
+var HMR_HOST = null;
+var HMR_PORT = 1234;
+var HMR_SECURE = false;
+var HMR_ENV_HASH = "d751713988987e9331980363e24189ce";
+module.bundle.HMR_BUNDLE_ID = "4779f229e37f00f4c9edf68b2ebd6ef9";
+// @flow
+/*global HMR_HOST, HMR_PORT, HMR_ENV_HASH, HMR_SECURE*/
+/*::
+import type {
+HMRAsset,
+HMRMessage,
+} from '@parcel/reporter-dev-server/src/HMRServer.js';
+interface ParcelRequire {
+(string): mixed;
+cache: {|[string]: ParcelModule|};
+hotData: mixed;
+Module: any;
+parent: ?ParcelRequire;
+isParcelRequire: true;
+modules: {|[string]: [Function, {|[string]: string|}]|};
+HMR_BUNDLE_ID: string;
+root: ParcelRequire;
+}
+interface ParcelModule {
+hot: {|
+data: mixed,
+accept(cb: (Function) => void): void,
+dispose(cb: (mixed) => void): void,
+// accept(deps: Array<string> | string, cb: (Function) => void): void,
+// decline(): void,
+_acceptCallbacks: Array<(Function) => void>,
+_disposeCallbacks: Array<(mixed) => void>,
+|};
+}
+declare var module: {bundle: ParcelRequire, ...};
+declare var HMR_HOST: string;
+declare var HMR_PORT: string;
+declare var HMR_ENV_HASH: string;
+declare var HMR_SECURE: boolean;
+*/
+var OVERLAY_ID = '__parcel__error__overlay__';
+var OldModule = module.bundle.Module;
+function Module(moduleName) {
+  OldModule.call(this, moduleName);
+  this.hot = {
+    data: module.bundle.hotData,
+    _acceptCallbacks: [],
+    _disposeCallbacks: [],
+    accept: function (fn) {
+      this._acceptCallbacks.push(fn || (function () {}));
+    },
+    dispose: function (fn) {
+      this._disposeCallbacks.push(fn);
+    }
+  };
+  module.bundle.hotData = undefined;
+}
+module.bundle.Module = Module;
+var checkedAssets, /*: {|[string]: boolean|}*/
+acceptedAssets, /*: {|[string]: boolean|}*/
+/*: {|[string]: boolean|}*/
+assetsToAccept;
+function getHostname() {
+  return HMR_HOST || (location.protocol.indexOf('http') === 0 ? location.hostname : 'localhost');
+}
+function getPort() {
+  return HMR_PORT || location.port;
+}
+// eslint-disable-next-line no-redeclare
+var parent = module.bundle.parent;
+if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
+  var hostname = getHostname();
+  var port = getPort();
+  var protocol = HMR_SECURE || location.protocol == 'https:' && !(/localhost|127.0.0.1|0.0.0.0/).test(hostname) ? 'wss' : 'ws';
+  var ws = new WebSocket(protocol + '://' + hostname + (port ? ':' + port : '') + '/');
+  // $FlowFixMe
+  ws.onmessage = function (event) /*: {data: string, ...}*/
+  {
+    checkedAssets = {
+      /*: {|[string]: boolean|}*/
+    };
+    acceptedAssets = {
+      /*: {|[string]: boolean|}*/
+    };
+    assetsToAccept = [];
+    var data = /*: HMRMessage*/
+    JSON.parse(event.data);
+    if (data.type === 'update') {
+      // Remove error overlay if there is one
+      removeErrorOverlay();
+      let assets = data.assets.filter(asset => asset.envHash === HMR_ENV_HASH);
+      // Handle HMR Update
+      var handled = false;
+      assets.forEach(asset => {
+        var didAccept = asset.type === 'css' || asset.type === 'js' && hmrAcceptCheck(module.bundle.root, asset.id, asset.depsByBundle);
+        if (didAccept) {
+          handled = true;
+        }
+      });
+      if (handled) {
+        console.clear();
+        assets.forEach(function (asset) {
+          hmrApply(module.bundle.root, asset);
+        });
+        for (var i = 0; i < assetsToAccept.length; i++) {
+          var id = assetsToAccept[i][1];
+          if (!acceptedAssets[id]) {
+            hmrAcceptRun(assetsToAccept[i][0], id);
+          }
+        }
+      } else {
+        window.location.reload();
+      }
+    }
+    if (data.type === 'error') {
+      // Log parcel errors to console
+      for (let ansiDiagnostic of data.diagnostics.ansi) {
+        let stack = ansiDiagnostic.codeframe ? ansiDiagnostic.codeframe : ansiDiagnostic.stack;
+        console.error('🚨 [parcel]: ' + ansiDiagnostic.message + '\n' + stack + '\n\n' + ansiDiagnostic.hints.join('\n'));
+      }
+      // Render the fancy html overlay
+      removeErrorOverlay();
+      var overlay = createErrorOverlay(data.diagnostics.html);
+      // $FlowFixMe
+      document.body.appendChild(overlay);
+    }
+  };
+  ws.onerror = function (e) {
+    console.error(e.message);
+  };
+  ws.onclose = function (e) {
+    if (undefined !== 'test') {
+      console.warn('[parcel] 🚨 Connection to the HMR server was lost');
+    }
+  };
+}
+function removeErrorOverlay() {
+  var overlay = document.getElementById(OVERLAY_ID);
+  if (overlay) {
+    overlay.remove();
+    console.log('[parcel] ✨ Error resolved');
+  }
+}
+function createErrorOverlay(diagnostics) {
+  var overlay = document.createElement('div');
+  overlay.id = OVERLAY_ID;
+  let errorHTML = '<div style="background: black; opacity: 0.85; font-size: 16px; color: white; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; padding: 30px; font-family: Menlo, Consolas, monospace; z-index: 9999;">';
+  for (let diagnostic of diagnostics) {
+    let stack = diagnostic.codeframe ? diagnostic.codeframe : diagnostic.stack;
+    errorHTML += `
+      <div>
+        <div style="font-size: 18px; font-weight: bold; margin-top: 20px;">
+          🚨 ${diagnostic.message}
+        </div>
+        <pre>
+          ${stack}
+        </pre>
+        <div>
+          ${diagnostic.hints.map(hint => '<div>' + hint + '</div>').join('')}
+        </div>
+      </div>
+    `;
+  }
+  errorHTML += '</div>';
+  overlay.innerHTML = errorHTML;
+  return overlay;
+}
+function getParents(bundle, id) /*: Array<[ParcelRequire, string]>*/
+{
+  var modules = bundle.modules;
+  if (!modules) {
+    return [];
+  }
+  var parents = [];
+  var k, d, dep;
+  for (k in modules) {
+    for (d in modules[k][1]) {
+      dep = modules[k][1][d];
+      if (dep === id || Array.isArray(dep) && dep[dep.length - 1] === id) {
+        parents.push([bundle, k]);
+      }
+    }
+  }
+  if (bundle.parent) {
+    parents = parents.concat(getParents(bundle.parent, id));
+  }
+  return parents;
+}
+function updateLink(link) {
+  var newLink = link.cloneNode();
+  newLink.onload = function () {
+    if (link.parentNode !== null) {
+      // $FlowFixMe
+      link.parentNode.removeChild(link);
+    }
+  };
+  newLink.setAttribute('href', // $FlowFixMe
+  link.getAttribute('href').split('?')[0] + '?' + Date.now());
+  // $FlowFixMe
+  link.parentNode.insertBefore(newLink, link.nextSibling);
+}
+var cssTimeout = null;
+function reloadCSS() {
+  if (cssTimeout) {
+    return;
+  }
+  cssTimeout = setTimeout(function () {
+    var links = document.querySelectorAll('link[rel="stylesheet"]');
+    for (var i = 0; i < links.length; i++) {
+      // $FlowFixMe[incompatible-type]
+      var href = /*: string*/
+      links[i].getAttribute('href');
+      var hostname = getHostname();
+      var servedFromHMRServer = hostname === 'localhost' ? new RegExp('^(https?:\\/\\/(0.0.0.0|127.0.0.1)|localhost):' + getPort()).test(href) : href.indexOf(hostname + ':' + getPort());
+      var absolute = (/^https?:\/\//i).test(href) && href.indexOf(window.location.origin) !== 0 && !servedFromHMRServer;
+      if (!absolute) {
+        updateLink(links[i]);
+      }
+    }
+    cssTimeout = null;
+  }, 50);
+}
+function hmrApply(bundle, /*: ParcelRequire*/
+asset) /*:  HMRAsset*/
+{
+  var modules = bundle.modules;
+  if (!modules) {
+    return;
+  }
+  if (asset.type === 'css') {
+    reloadCSS();
+    return;
+  }
+  let deps = asset.depsByBundle[bundle.HMR_BUNDLE_ID];
+  if (deps) {
+    var fn = new Function('require', 'module', 'exports', asset.output);
+    modules[asset.id] = [fn, deps];
+  } else if (bundle.parent) {
+    hmrApply(bundle.parent, asset);
+  }
+}
+function hmrAcceptCheck(bundle, /*: ParcelRequire*/
+id, /*: ParcelRequire*/
+/*: string*/
+depsByBundle) /*: ?{ [string]: { [string]: string } }*/
+{
+  var modules = bundle.modules;
+  if (!modules) {
+    return;
+  }
+  if (depsByBundle && !depsByBundle[bundle.HMR_BUNDLE_ID]) {
+    // If we reached the root bundle without finding where the asset should go,
+    // there's nothing to do. Mark as "accepted" so we don't reload the page.
+    if (!bundle.parent) {
+      return true;
+    }
+    return hmrAcceptCheck(bundle.parent, id, depsByBundle);
+  }
+  if (checkedAssets[id]) {
+    return;
+  }
+  checkedAssets[id] = true;
+  var cached = bundle.cache[id];
+  assetsToAccept.push([bundle, id]);
+  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
+    return true;
+  }
+  return getParents(module.bundle.root, id).some(function (v) {
+    return hmrAcceptCheck(v[0], v[1], null);
+  });
+}
+function hmrAcceptRun(bundle, /*: ParcelRequire*/
+id) /*: string*/
+{
+  var cached = bundle.cache[id];
+  bundle.hotData = {};
+  if (cached && cached.hot) {
+    cached.hot.data = bundle.hotData;
+  }
+  if (cached && cached.hot && cached.hot._disposeCallbacks.length) {
+    cached.hot._disposeCallbacks.forEach(function (cb) {
+      cb(bundle.hotData);
+    });
+  }
+  delete bundle.cache[id];
+  bundle(id);
+  cached = bundle.cache[id];
+  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
+    cached.hot._acceptCallbacks.forEach(function (cb) {
+      var assetsToAlsoAccept = cb(function () {
+        return getParents(module.bundle.root, id);
+      });
+      if (assetsToAlsoAccept && assetsToAccept.length) {
+        assetsToAccept.push.apply(assetsToAccept, assetsToAlsoAccept);
+      }
+    });
+  }
+  acceptedAssets[id] = true;
+}
+
+},{}],"2nskz":[function(require,module,exports) {
+var _nonogram = require('./nonogram');
+var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
+var _nonogramDefault = _parcelHelpers.interopDefault(_nonogram);
+const containerElement = document.querySelector('.container');
+let mousePressed = false;
+let currentScale = 1;
+document.addEventListener('wheel', e => {
+  const gameElement = document.querySelector('.game');
+  if (gameElement) {
+    currentScale = currentScale * (1 - e.deltaY * 0.001);
+    gameElement.style.transform = `scale(${Math.max(Math.min(currentScale, 1.5), 0.5)}`;
+    console.log(currentScale);
+  }
+});
+const getElementPosition = element => {
+  return [Number(element.dataset.row), Number(element.dataset.column)];
+};
+const createHelperElement = (nono, axis) => {
+  const helpersElement = document.createElement('div');
+  helpersElement.classList.add(`${axis}Helpers`);
+  const width = nono.helpers[axis].length;
+  for (let i = 0; i < width; i++) {
+    const helperElement = document.createElement('div');
+    helperElement.classList.add(`${axis}Helper`);
+    const helper = axis === 'column' ? nono.helpers.column[i] : nono.helpers.row[i];
+    for (let j = 0; j < helper.length; j++) {
+      const numberElement = document.createElement('div');
+      numberElement.classList.add('number');
+      numberElement.textContent = String(helper[j]);
+      helperElement.appendChild(numberElement);
+    }
+    helpersElement.appendChild(helperElement);
+  }
+  return helpersElement;
+};
+const createModal = timeElapsed => {
+  const modalElement = document.createElement('div');
+  modalElement.classList.add('modal');
+  const modalBodyElement = document.createElement('div');
+  modalBodyElement.classList.add('modal__body');
+  const modalHeaderElement = document.createElement('h1');
+  modalHeaderElement.textContent = 'Congratulations! 🎉';
+  modalBodyElement.appendChild(modalHeaderElement);
+  const modalTextElement = document.createElement('p');
+  modalTextElement.classList.add('modal__text');
+  modalTextElement.innerHTML = `You have completed the level in <span class="modal__time">${timeElapsed}</span> seconds.`;
+  modalBodyElement.appendChild(modalTextElement);
+  const modalButtonsElement = document.createElement('div');
+  modalButtonsElement.classList.add('modal__buttons');
+  const modalSecondaryButton = createButtonElement('Reset', renderLevel);
+  modalSecondaryButton.classList.add('modal__button');
+  modalSecondaryButton.classList.add('modal__button--secondary');
+  modalButtonsElement.appendChild(modalSecondaryButton);
+  const modalPrimaryButton = createButtonElement('Back to Menu', renderMenu);
+  modalPrimaryButton.classList.add('modal__button');
+  modalPrimaryButton.classList.add('modal__button--primary');
+  modalButtonsElement.appendChild(modalPrimaryButton);
+  modalBodyElement.appendChild(modalButtonsElement);
+  modalElement.appendChild(modalBodyElement);
+  return modalElement;
+};
+const handleSolvedAxis = (row, axis) => {
+  new Audio('static/axis.m4a').play();
+  const rowElements = document.querySelectorAll(`[data-${axis}="${row}"`);
+  rowElements.forEach(elem => {
+    elem.classList.add('solved');
+    if (!elem.classList.contains('checked')) {
+      elem.classList.add('unknown');
+    }
+  });
+};
+const createCellElement = (row, column) => {
+  const cellElement = document.createElement('div');
+  cellElement.classList.add('cell');
+  cellElement.dataset.row = String(row);
+  cellElement.dataset.column = String(column);
+  cellElement.tabIndex = 0;
+  return cellElement;
+};
+const createBoardElement = nono => {
+  const startTime = new Date().getTime();
+  const handleClick = (event, action) => {
+    event.preventDefault();
+    const element = event.target;
+    if (!element.classList.contains('cell') || element.classList.contains('solved')) {
+      return;
+    }
+    const [row, column] = getElementPosition(element);
+    if (action === 'check') {
+      new Audio('static/left.m4a').play();
+      element.classList.remove('unknown');
+      element.classList.toggle('checked');
+      nono.toggle(column, row);
+    } else {
+      new Audio('static/right.m4a').play();
+      element.classList.remove('checked');
+      element.classList.toggle('unknown');
+      nono.uncheck(column, row);
+    }
+    if (nono.solvedRow(row)) {
+      handleSolvedAxis(row, 'row');
+    }
+    if (nono.solvedColumn(column)) {
+      handleSolvedAxis(column, 'column');
+    }
+    if (nono.solved) {
+      const totalTime = Math.floor((new Date().getTime() - startTime) / 1000);
+      new Audio('static/win.m4a').play();
+      containerElement.appendChild(createModal(totalTime));
+      const focusTarget = document.querySelector('.modal__button--secondary');
+      focusTarget.focus();
+    }
+  };
+  const [width, height] = nono.size;
+  const boardElement = document.createElement('div');
+  boardElement.classList.add('board');
+  boardElement.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
+  for (let i = 0; i < height; i++) {
+    for (let j = 0; j < width; j++) {
+      boardElement.appendChild(createCellElement(i, j));
+    }
+  }
+  boardElement.addEventListener('click', e => {
+    handleClick(e, 'check');
+  });
+  boardElement.addEventListener('contextmenu', e => {
+    handleClick(e, 'mark');
+  });
+  boardElement.addEventListener('keyup', e => {
+    const element = document.activeElement;
+    if (!(element instanceof HTMLDivElement)) {
+      return;
+    }
+    let [row, column] = getElementPosition(element);
+    console.log(row, column);
+    console.log(e.key);
+    switch (e.key) {
+      case 'Enter':
+        element.click();
+        return;
+      case 'ArrowUp':
+        row--;
+        break;
+      case 'ArrowDown':
+        row++;
+        break;
+      case 'ArrowLeft':
+        column--;
+        break;
+      case 'ArrowRight':
+        column++;
+        break;
+    }
+    const nextFocusTarget = document.querySelector(`[data-row="${row}"][data-column="${column}"]`);
+    if (nextFocusTarget) {
+      nextFocusTarget.focus();
+    }
+  });
+  return boardElement;
+};
+const createGameElement = nono => {
+  const gameElement = document.createElement('div');
+  gameElement.classList.add('game');
+  gameElement.appendChild(createHelperElement(nono, 'column'));
+  gameElement.appendChild(createHelperElement(nono, 'row'));
+  gameElement.appendChild(createBoardElement(nono));
+  return gameElement;
+};
+const createButtonElement = (text, callback) => {
+  const button = document.createElement('button');
+  button.textContent = text;
+  if (callback) {
+    button.addEventListener('click', callback);
+  }
+  button.addEventListener('click', () => {
+    new Audio('static/button.m4a').play();
+  });
+  return button;
+};
+const createBackButtonElement = callback => {
+  const button = createButtonElement('Menu', callback);
+  button.classList.add('back');
+  return button;
+};
+const createMenuButtonElement = (text, callback) => {
+  const button = createButtonElement(text, callback);
+  button.classList.add('menu__button');
+  return button;
+};
+const createMenuElement = () => {
+  const menuElement = document.createElement('div');
+  menuElement.classList.add('menu');
+  menuElement.appendChild(createMenuButtonElement('Random', renderLevel));
+  menuElement.appendChild(createMenuButtonElement('Levels'));
+  menuElement.appendChild(createMenuButtonElement('Editor'));
+  return menuElement;
+};
+const renderLevel = () => {
+  const randomWidth = Math.floor(Math.random() * 8) + 2;
+  const randomHeight = Math.floor(Math.random() * 8) + 2;
+  const nono = _nonogramDefault.default.random(randomWidth, randomHeight);
+  containerElement.innerHTML = '';
+  containerElement.appendChild(createBackButtonElement(renderMenu));
+  containerElement.appendChild(createGameElement(nono));
+};
+const renderMenu = () => {
+  containerElement.innerHTML = '';
+  containerElement.appendChild(createMenuElement());
+};
+renderMenu();
+
+},{"@parcel/transformer-js/lib/esmodule-helpers.js":"7GRN4","./nonogram":"MbDJX"}],"7GRN4":[function(require,module,exports) {
+"use strict";
+
+exports.interopDefault = function (a) {
+  return a && a.__esModule ? a : {
+    default: a
+  };
+};
+
+exports.defineInteropFlag = function (a) {
+  Object.defineProperty(a, '__esModule', {
+    value: true
+  });
+};
+
+exports.exportAll = function (source, dest) {
+  Object.keys(source).forEach(function (key) {
+    if (key === 'default' || key === '__esModule') {
+      return;
+    } // Skip duplicate re-exports when they have the same value.
+
+
+    if (key in dest && dest[key] === source[key]) {
+      return;
+    }
+
+    Object.defineProperty(dest, key, {
+      enumerable: true,
+      get: function () {
+        return source[key];
+      }
+    });
+  });
+  return dest;
+};
+
+exports.export = function (dest, destName, get) {
+  Object.defineProperty(dest, destName, {
+    enumerable: true,
+    get: get
+  });
+};
+},{}],"MbDJX":[function(require,module,exports) {
+var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
+_parcelHelpers.defineInteropFlag(exports);
+function equals(left, right) {
+  if (left.length !== right.length) {
+    return false;
+  }
+  for (let [index, value] of left.entries()) {
+    if (value !== right[index]) {
+      return false;
+    }
+  }
+  return true;
+}
+class Nonogram {
+  solution = [];
+  board = [];
+  rowHelpers = [];
+  columnHelpers = [];
+  width = 2;
+  height = 2;
+  constructor(solution) {
+    this.validateBoard(solution);
+    this.fillBoards(solution);
+    this.generateHelpers();
+  }
+  get solved() {
+    for (let [rowIndex, rowValue] of this.board.entries()) {
+      if (rowValue.some((x, i) => x !== this.solution[rowIndex][i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+  solvedRow(row) {
+    const solvedRow = this.solution[row];
+    for (const [cellIndex, cell] of solvedRow.entries()) {
+      if (cell !== this.board[row][cellIndex]) {
+        return false;
+      }
+    }
+    return true;
+  }
+  solvedColumn(column) {
+    for (let i = 0; i < this.height; i++) {
+      if (this.board[i][column] !== this.solution[i][column]) {
+        return false;
+      }
+    }
+    return true;
+  }
+  get size() {
+    return [this.width, this.height];
+  }
+  get cells() {
+    const board = Array(this.height).fill(null).map(() => Array(this.width));
+    for (let [rowIndex, rowValue] of this.solution.entries()) {
+      for (let [columnIndex, columnValue] of rowValue.entries()) {
+        board[rowIndex][columnIndex] = columnValue;
+      }
+    }
+    return board;
+  }
+  get helpers() {
+    return {
+      row: this.rowHelpers,
+      column: this.columnHelpers
+    };
+  }
+  validateSize(width, height = 5) {
+    if (width < 1 || height > 9 || width > 9 || width < 1) {
+      throw new Error(`Invalid argument. The length of an axis must be between 2 and 10.`);
+    }
+  }
+  validateBoard(solution) {
+    if (!Array.isArray(solution)) {
+      throw new Error(`Invalid argument. Must be an array of equal-sized arrays containing a single boolean value.`);
+    }
+    const height = solution.length;
+    const width = solution[0].length;
+    this.validateSize(width, height);
+    this.height = height;
+    this.width = width;
+    for (let row of solution) {
+      if (!Array.isArray(solution)) {
+        throw new Error(`Invalid argument. Must be an array of equal-sized arrays containing a single boolean value.`);
+      }
+      if (row.length != this.width) {
+        throw new Error(`Invalid argument. Every row of the array must be of the same length.`);
+      }
+    }
+  }
+  fillBoards(solution) {
+    this.solution = Array(this.height).fill(null).map(() => Array(this.width));
+    for (let [rowIndex, rowValue] of solution.entries()) {
+      for (let [columnIndex, columnValue] of rowValue.entries()) {
+        this.solution[rowIndex][columnIndex] = columnValue;
+      }
+    }
+    this.board = Array(this.height).fill(null).map(() => Array(this.width).fill(false));
+  }
+  generateHelpers() {
+    this.rowHelpers = Array(this.height).fill(null).map(() => []);
+    this.columnHelpers = Array(this.width).fill(null).map(() => []);
+    // Generate Row Helpers
+    for (let [rowIndex, rowValue] of this.solution.entries()) {
+      let nextValue = true;
+      for (let value of rowValue) {
+        let lastIndex = this.rowHelpers[rowIndex].length - 1;
+        if (value && nextValue) {
+          this.rowHelpers[rowIndex].push(1);
+          nextValue = false;
+        } else if (value) {
+          this.rowHelpers[rowIndex][lastIndex]++;
+        } else {
+          nextValue = true;
+        }
+      }
+    }
+    // Generate Column Helpers
+    for (let columnIndex = 0; columnIndex < this.width; columnIndex++) {
+      let nextValue = true;
+      for (let rowIndex = 0; rowIndex < this.height; rowIndex++) {
+        let lastIndex = this.columnHelpers[columnIndex].length - 1;
+        let value = this.solution[rowIndex][columnIndex];
+        if (value && nextValue) {
+          this.columnHelpers[columnIndex].push(1);
+          nextValue = false;
+        } else if (value) {
+          this.columnHelpers[columnIndex][lastIndex]++;
+        } else {
+          nextValue = true;
+        }
+      }
+    }
+  }
+  static random(width, height = width) {
+    let randomBoard = Array(height).fill(null).map(() => Array(width).fill(false));
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        randomBoard[i][j] = Math.random() > 0.5 ? true : false;
+      }
+    }
+    return new Nonogram(randomBoard);
+  }
+  print(array) {
+    // Prints column helpers
+    for (let i = 0; i < (this.height + 1) / 2; i++) {
+      let stringifiedHelpers = '';
+      for (let j = 0; j < (this.width + 1) / 2; j++) {
+        stringifiedHelpers += '  ';
+      }
+      for (let j = 0; j < this.width; j++) {
+        let index = Math.floor(this.columnHelpers[j].length - (this.height + 1) / 2 + i);
+        if (index < 0) {
+          stringifiedHelpers += '  ';
+          continue;
+        }
+        stringifiedHelpers += this.columnHelpers[j][index];
+        stringifiedHelpers += ' ';
+      }
+      console.log(stringifiedHelpers);
+    }
+    // Prints row helpers and tiles
+    for (let [rowIndex, rowValue] of array.entries()) {
+      let stringifiedRow = '';
+      // Prints row helpers
+      for (let i = 0; i < (this.width + 1) / 2; i++) {
+        let index = Math.floor(this.rowHelpers[rowIndex].length - (this.width + 1) / 2 + i);
+        if (index < 0) {
+          stringifiedRow += '  ';
+          continue;
+        }
+        stringifiedRow += this.rowHelpers[rowIndex][index];
+        stringifiedRow += ' ';
+      }
+      // Cuts off margin from row helpers and tiles
+      stringifiedRow = stringifiedRow.slice(0, stringifiedRow.length - 1);
+      // Prints tiles
+      for (let value of rowValue) {
+        stringifiedRow += value ? '⬛' : '⬜';
+      }
+      console.log(stringifiedRow);
+    }
+    console.log();
+  }
+  printSolution() {
+    this.print(this.solution);
+  }
+  printBoard() {
+    this.print(this.board);
+  }
+  toggle(column, row) {
+    if (row < 0 || row >= this.height || column < 0 || column >= this.width) {
+      throw new Error(`Invalid argument. Index must be bigger than 0 and smaller than the dimension length.`);
+    }
+    this.board[row][column] = !this.board[row][column];
+  }
+  check(column, row) {
+    if (row < 0 || row >= this.height || column < 0 || column >= this.width) {
+      throw new Error(`Invalid argument. Index must be bigger than 0 and smaller than the dimension length.`);
+    }
+    this.board[row][column] = true;
+  }
+  uncheck(column, row) {
+    if (row < 0 || row >= this.height || column < 0 || column >= this.width) {
+      throw new Error(`Invalid argument. Index must be bigger than 0 and smaller than the dimension length.`);
+    }
+    this.board[row][column] = false;
+  }
+  encode() {
+    let urlQuery = `${this.width}&${this.height}&`;
+    let gameHash = '';
+    for (let row of this.solution) {
+      for (let cell of row) {
+        gameHash += cell ? '1' : '0';
+      }
+    }
+    urlQuery += gameHash;
+    return urlQuery;
+  }
+  static validUrl(urlQuery) {
+    const regex = /^[1-9]|10&[1-9]|10&[a-zA-Z]+$/;
+    return regex.test(urlQuery);
+  }
+  static decode(urlQuery) {
+    if (!Nonogram.validUrl(urlQuery)) {
+      throw new Error('URL needs to be in a number&number&hash format');
+    }
+    console.log(urlQuery);
+    let [w, h, hash] = urlQuery.split('&');
+    let width = Number(w);
+    let height = Number(h);
+    let solution = Array(height).fill(null).map(() => []);
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        const index = i * width + j;
+        solution[i][j] = hash[index] === '1' ? true : false;
+      }
+    }
+    return new Nonogram(solution);
+  }
+}
+exports.default = Nonogram;
+let solution = [[true, false, true, true, true], [false, false, false, false, true], [false, false, true, false, true], [true, false, false, false, false], [false, true, true, true, true]];
+
+},{"@parcel/transformer-js/lib/esmodule-helpers.js":"7GRN4"}]},["1AUpZ","2nskz"], "2nskz", "parcelRequire5fb9")
+
+//# sourceMappingURL=index.HASH_REF_4779f229e37f00f4c9edf68b2ebd6ef9.js.map

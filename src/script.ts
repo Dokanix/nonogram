@@ -1,10 +1,43 @@
-import { create } from '../node_modules/ts-node/dist/index.js';
 import Nonogram from './nonogram.js';
 
 type Axis = 'column' | 'row';
 type Action = 'check' | 'mark';
 
 const containerElement = document.querySelector('.container')!;
+
+let mouseDown = false;
+
+document.addEventListener('mousedown', (e) => {
+  if (e.button === 0) {
+    mouseDown = true;
+  }
+});
+
+document.addEventListener('mouseup', (e) => {
+  if (e.button === 0) {
+    mouseDown = false;
+  }
+});
+
+let currentScale = 1;
+
+document.addEventListener('wheel', (e) => {
+  console.log(currentScale);
+
+  const gameElement = document.querySelector('.game') as HTMLDivElement;
+
+  if (gameElement) {
+    currentScale = Math.max(
+      Math.min(currentScale * (1 - e.deltaY * 0.001), 1.5),
+      0.5
+    );
+    gameElement.style.transform = `scale(${Math.max(
+      Math.min(currentScale, 1.5),
+      0.5
+    )}`;
+    console.log(currentScale);
+  }
+});
 
 const getElementPosition = (element: HTMLDivElement): [number, number] => {
   return [Number(element.dataset.row), Number(element.dataset.column)];
@@ -103,6 +136,49 @@ const createCellElement = (row: number, column: number): HTMLDivElement => {
 const createBoardElement = (nono: Nonogram): HTMLDivElement => {
   const startTime = new Date().getTime();
 
+  const handleHover = (event: MouseEvent) => {
+    if (!mouseDown) {
+      return;
+    }
+
+    const element = event.target as HTMLDivElement;
+
+    if (
+      !element.classList.contains('cell') ||
+      element.classList.contains('solved')
+    ) {
+      return;
+    }
+
+    const [row, column] = getElementPosition(element);
+
+    if (!element.classList.contains('checked')) {
+      new Audio('static/left.m4a').play();
+      element.classList.remove('unknown');
+      element.classList.add('checked');
+      nono.check(column, row);
+    }
+
+    if (nono.solvedRow(row)) {
+      handleSolvedAxis(row, 'row');
+    }
+
+    if (nono.solvedColumn(column)) {
+      handleSolvedAxis(column, 'column');
+    }
+
+    if (nono.solved) {
+      const totalTime = Math.floor((new Date().getTime() - startTime) / 1000);
+      new Audio('static/win.m4a').play();
+      containerElement.appendChild(createModal(totalTime));
+      document.querySelector('.modal__body')?.classList.add('visible');
+      const focusTarget = document.querySelector(
+        '.modal__button--secondary'
+      ) as HTMLDivElement;
+      focusTarget.focus();
+    }
+  };
+
   const handleClick = (event: MouseEvent, action: Action) => {
     event.preventDefault();
 
@@ -160,12 +236,18 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
     }
   }
 
-  boardElement.addEventListener('click', (e) => {
-    handleClick(e, 'check');
+  boardElement.addEventListener('mousedown', (e) => {
+    if (e.button === 0) {
+      handleClick(e, 'check');
+    }
   });
 
   boardElement.addEventListener('contextmenu', (e) => {
     handleClick(e, 'mark');
+  });
+
+  boardElement.addEventListener('mouseover', (e) => {
+    handleHover(e);
   });
 
   boardElement.addEventListener('keyup', (e) => {
@@ -267,6 +349,7 @@ const createMenuElement = (): HTMLDivElement => {
 };
 
 const renderLevel = () => {
+  currentScale = 1;
   const randomWidth = Math.floor(Math.random() * 8) + 2;
   const randomHeight = Math.floor(Math.random() * 8) + 2;
 
