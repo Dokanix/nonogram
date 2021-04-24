@@ -51,12 +51,12 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
       const row = Number(element.dataset.row);
 
       if (state === 'checked') {
-        new Audio('../static/left.m4a').play();
+        new Audio('static/left.m4a').play();
         element.classList.remove('unknown');
         element.classList.toggle('checked');
         nono.toggle(column, row);
       } else {
-        new Audio('../static/right.m4a').play();
+        new Audio('static/right.m4a').play();
         element.classList.remove('checked');
         element.classList.toggle('unknown');
         nono.uncheck(column, row);
@@ -64,7 +64,7 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
     }
 
     if (nono.solved) {
-      new Audio('../static/win.m4a').play();
+      new Audio('static/win.m4a').play();
       containerElement.appendChild(createCongratulationsElement());
     }
   };
