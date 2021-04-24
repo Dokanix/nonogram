@@ -1,8 +1,10 @@
 html {
   font-size: 62.5%;
   --color-dark: rgba(0, 0, 50);
-  --color-light: rgba(255, 255, 248);
+  --color-light: rgba(255, 255, 240);
   --color-white: white;
+  --color-red: #ff6161;
+  --color-green: #2c835a;
   font-family: 'Merienda', cursive;
 }
 
@@ -17,7 +19,15 @@ body > * {
   box-sizing: inherit;
 }
 
+.hidden {
+  display: none;
+}
+
 .back {
+  font-family: 'Merienda', cursive;
+  background: none;
+  border: none;
+  cursor: pointer;
   text-transform: uppercase;
   position: absolute;
   font-size: 2.4rem;
@@ -26,11 +36,9 @@ body > * {
   transition: transform 0.1s;
 }
 
-.hidden {
-  display: none;
-}
-
+.back:focus,
 .back:hover {
+  outline: none;
   transform: scale(1.1);
 }
 
@@ -201,8 +209,18 @@ body > * {
   transition: filter 0.1s, transform 0.1s;
 }
 
+.cell:focus,
 .cell:hover {
   transform: scale(1.05);
+  outline: none;
+}
+
+.cell:focus {
+  border: 1px solid var(--color-red);
+}
+
+.unknown:focus {
+  border: 1px solid var(--color-dark);
 }
 
 .checked {
@@ -211,7 +229,7 @@ body > * {
 }
 
 .unknown {
-  background: #ff6161;
+  background: var(--color-red);
   box-shadow: 0.2rem 0.2rem 0.8rem rgba(165, 65, 65, 0.2);
 }
 
@@ -219,6 +237,79 @@ body > * {
   opacity: 0.5;
 }
 
-h1 {
+.modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(2px) brightness(70%);
+  z-index: 2;
+  transition: backdrop-filter 1s;
+}
+
+.modal__body {
+  position: relative;
+  background-color: white;
+  width: fit-content;
+  border-radius: 0.4rem;
+  margin: auto;
+  margin-top: 40vh;
+  padding: 4.8rem;
+  padding-bottom: 2.4rem;
+  box-shadow: 1rem 2rem 2rem rgba(0, 0, 0, 0.2);
+}
+
+.modal__header {
   text-align: center;
+  margin: 0;
+  font-size: 2.4rem;
+}
+
+.modal__text {
+  text-align: center;
+  font-size: 1.6rem;
+  font-family: sans-serif;
+  margin-bottom: 4.8rem;
+}
+
+.modal__buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal__button {
+  cursor: pointer;
+  padding: 0.8rem 1.6rem;
+  border-radius: 0.4rem;
+  border: none;
+  font-weight: bold;
+}
+
+.modal__button:hover,
+.modal__button:focus {
+  outline: none;
+  transform: translateY(-0.1rem);
+  filter: brightness(120%);
+  transition: all 0.2s;
+}
+
+.modal__button--secondary {
+  background: none;
+  margin-right: 0.8rem;
+}
+
+.modal__time {
+  color: var(--color-green);
+  font-weight: bold;
+}
+
+.modal__button--secondary:hover,
+.modal__button--secondary:focus {
+  color: var(--color-green);
+}
+
+.modal__button--primary {
+  color: var(--color-white);
+  background-color: var(--color-green);
 }

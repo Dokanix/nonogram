@@ -39,25 +39,12 @@ export default class Nonogram {
         return true;
     }
     solvedColumn(column) {
-        const helpers = this.columnHelpers[column];
-        const current = [];
-        let nextValue = true;
-        for (let rowIndex = 0; rowIndex < this.height; rowIndex++) {
-            let lastIndex = current.length - 1;
-            let value = this.board[rowIndex][column];
-            if (value && nextValue) {
-                current.push(1);
-                nextValue = false;
-            }
-            else if (value) {
-                current[lastIndex]++;
-            }
-            else {
-                nextValue = true;
+        for (let i = 0; i < this.height; i++) {
+            if (this.board[i][column] !== this.solution[i][column]) {
+                return false;
             }
         }
-        console.log(helpers, current);
-        return equals(helpers, current);
+        return true;
     }
     get size() {
         return [this.width, this.height];

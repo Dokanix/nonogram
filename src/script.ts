@@ -1,10 +1,14 @@
+import { create } from '../node_modules/ts-node/dist/index.js';
 import Nonogram from './nonogram.js';
 
 type Axis = 'column' | 'row';
 type Action = 'check' | 'mark';
 
 const containerElement = document.querySelector('.container')!;
-const backElement = document.querySelector('.back')!;
+
+const getElementPosition = (element: HTMLDivElement): [number, number] => {
+  return [Number(element.dataset.row), Number(element.dataset.column)];
+};
 
 const createHelperElement = (nono: Nonogram, axis: Axis): HTMLDivElement => {
   const helpersElement = document.createElement('div');
@@ -33,11 +37,44 @@ const createHelperElement = (nono: Nonogram, axis: Axis): HTMLDivElement => {
   return helpersElement;
 };
 
-const createCongratulationsElement = (): HTMLHeadingElement => {
-  const congratulationsElement = document.createElement('h1');
-  congratulationsElement.innerText = 'Congratulations!';
+const createModal = (timeElapsed: number) => {
+  const modalElement = document.createElement('div');
+  modalElement.classList.add('modal');
 
-  return congratulationsElement;
+  const modalBodyElement = document.createElement('div');
+  modalBodyElement.classList.add('modal__body');
+
+  const modalHeaderElement = document.createElement('h1');
+  modalHeaderElement.textContent = 'Congratulations! 🎉';
+
+  modalBodyElement.appendChild(modalHeaderElement);
+
+  const modalTextElement = document.createElement('p');
+  modalTextElement.classList.add('modal__text');
+  modalTextElement.innerHTML = `You have completed the level in <span class="modal__time">${timeElapsed}</span> seconds.`;
+
+  modalBodyElement.appendChild(modalTextElement);
+
+  const modalButtonsElement = document.createElement('div');
+  modalButtonsElement.classList.add('modal__buttons');
+
+  const modalSecondaryButton = createButtonElement('Reset', renderLevel);
+  modalSecondaryButton.classList.add('modal__button');
+  modalSecondaryButton.classList.add('modal__button--secondary');
+
+  modalButtonsElement.appendChild(modalSecondaryButton);
+
+  const modalPrimaryButton = createButtonElement('Back to Menu', renderMenu);
+  modalPrimaryButton.classList.add('modal__button');
+  modalPrimaryButton.classList.add('modal__button--primary');
+
+  modalButtonsElement.appendChild(modalPrimaryButton);
+
+  modalBodyElement.appendChild(modalButtonsElement);
+
+  modalElement.appendChild(modalBodyElement);
+
+  return modalElement;
 };
 
 const handleSolvedAxis = (row: number, axis: Axis) => {
@@ -53,11 +90,23 @@ const handleSolvedAxis = (row: number, axis: Axis) => {
   });
 };
 
+const createCellElement = (row: number, column: number): HTMLDivElement => {
+  const cellElement = document.createElement('div');
+  cellElement.classList.add('cell');
+  cellElement.dataset.row = String(row);
+  cellElement.dataset.column = String(column);
+  cellElement.tabIndex = 0;
+
+  return cellElement;
+};
+
 const createBoardElement = (nono: Nonogram): HTMLDivElement => {
+  const startTime = new Date().getTime();
+
   const handleClick = (event: MouseEvent, action: Action) => {
     event.preventDefault();
 
-    const element = event.target as HTMLElement;
+    const element = event.target as HTMLDivElement;
 
     if (
       !element.classList.contains('cell') ||
@@ -66,22 +115,13 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
       return;
     }
 
-    const column = Number(element.dataset.column);
-    const row = Number(element.dataset.row);
+    const [row, column] = getElementPosition(element);
 
     if (action === 'check') {
       new Audio('static/left.m4a').play();
       element.classList.remove('unknown');
       element.classList.toggle('checked');
       nono.toggle(column, row);
-
-      if (nono.solvedRow(row)) {
-        handleSolvedAxis(row, 'row');
-      }
-
-      if (nono.solvedColumn(column)) {
-        handleSolvedAxis(column, 'column');
-      }
     } else {
       new Audio('static/right.m4a').play();
       element.classList.remove('checked');
@@ -89,9 +129,18 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
       nono.uncheck(column, row);
     }
 
+    if (nono.solvedRow(row)) {
+      handleSolvedAxis(row, 'row');
+    }
+
+    if (nono.solvedColumn(column)) {
+      handleSolvedAxis(column, 'column');
+    }
+
     if (nono.solved) {
+      const totalTime = Math.floor((new Date().getTime() - startTime) / 1000);
       new Audio('static/win.m4a').play();
-      containerElement.appendChild(createCongratulationsElement());
+      containerElement.appendChild(createModal(totalTime));
     }
   };
 
@@ -103,13 +152,7 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
 
   for (let i = 0; i < height; i++) {
     for (let j = 0; j < width; j++) {
-      const cellElement = document.createElement('div');
-
-      cellElement.classList.add('cell');
-      cellElement.dataset.column = String(j);
-      cellElement.dataset.row = String(i);
-
-      boardElement.appendChild(cellElement);
+      boardElement.appendChild(createCellElement(i, j));
     }
   }
 
@@ -119,6 +162,44 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
 
   boardElement.addEventListener('contextmenu', (e) => {
     handleClick(e, 'mark');
+  });
+
+  boardElement.addEventListener('keyup', (e) => {
+    const element = document.activeElement;
+
+    if (!(element instanceof HTMLDivElement)) {
+      return;
+    }
+
+    let [row, column] = getElementPosition(element);
+    console.log(row, column);
+    console.log(e.key);
+
+    switch (e.key) {
+      case 'Enter':
+        element.click();
+        return;
+      case 'ArrowUp':
+        row--;
+        break;
+      case 'ArrowDown':
+        row++;
+        break;
+      case 'ArrowLeft':
+        column--;
+        break;
+      case 'ArrowRight':
+        column++;
+        break;
+    }
+
+    const nextFocusTarget = document.querySelector(
+      `[data-row="${row}"][data-column="${column}"]`
+    ) as HTMLDivElement;
+
+    if (nextFocusTarget) {
+      nextFocusTarget.focus();
+    }
   });
 
   return boardElement;
@@ -140,12 +221,32 @@ const createButtonElement = (
   callback?: () => void
 ): HTMLButtonElement => {
   const button = document.createElement('button');
-  button.classList.add('menu__button');
   button.textContent = text;
 
   if (callback) {
     button.addEventListener('click', callback);
   }
+
+  button.addEventListener('click', () => {
+    new Audio('static/button.m4a').play();
+  });
+
+  return button;
+};
+
+const createBackButtonElement = (callback?: () => void): HTMLButtonElement => {
+  const button = createButtonElement('Menu', callback);
+  button.classList.add('back');
+
+  return button;
+};
+
+const createMenuButtonElement = (
+  text: string,
+  callback?: () => void
+): HTMLButtonElement => {
+  const button = createButtonElement(text, callback);
+  button.classList.add('menu__button');
 
   return button;
 };
@@ -154,9 +255,9 @@ const createMenuElement = (): HTMLDivElement => {
   const menuElement = document.createElement('div');
   menuElement.classList.add('menu');
 
-  menuElement.appendChild(createButtonElement('Random', renderLevel));
-  menuElement.appendChild(createButtonElement('Levels'));
-  menuElement.appendChild(createButtonElement('Editor'));
+  menuElement.appendChild(createMenuButtonElement('Random', renderLevel));
+  menuElement.appendChild(createMenuButtonElement('Levels'));
+  menuElement.appendChild(createMenuButtonElement('Editor'));
 
   return menuElement;
 };
@@ -168,18 +269,13 @@ const renderLevel = () => {
   const nono = Nonogram.random(randomWidth, randomHeight);
 
   containerElement.innerHTML = '';
+  containerElement.appendChild(createBackButtonElement(renderMenu));
   containerElement.appendChild(createGameElement(nono));
-
-  backElement.classList.remove('hidden');
 };
 
 const renderMenu = () => {
   containerElement.innerHTML = '';
   containerElement.appendChild(createMenuElement());
-
-  backElement.classList.add('hidden');
 };
-
-backElement.addEventListener('click', renderMenu);
 
 renderMenu();

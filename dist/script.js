@@ -1,6 +1,8 @@
 import Nonogram from './nonogram.js';
 const containerElement = document.querySelector('.container');
-const backElement = document.querySelector('.back');
+const getElementPosition = (element) => {
+    return [Number(element.dataset.row), Number(element.dataset.column)];
+};
 const createHelperElement = (nono, axis) => {
     const helpersElement = document.createElement('div');
     helpersElement.classList.add(`${axis}Helpers`);
@@ -19,10 +21,31 @@ const createHelperElement = (nono, axis) => {
     }
     return helpersElement;
 };
-const createCongratulationsElement = () => {
-    const congratulationsElement = document.createElement('h1');
-    congratulationsElement.innerText = 'Congratulations!';
-    return congratulationsElement;
+const createModal = (timeElapsed) => {
+    const modalElement = document.createElement('div');
+    modalElement.classList.add('modal');
+    const modalBodyElement = document.createElement('div');
+    modalBodyElement.classList.add('modal__body');
+    const modalHeaderElement = document.createElement('h1');
+    modalHeaderElement.textContent = 'Congratulations! 🎉';
+    modalBodyElement.appendChild(modalHeaderElement);
+    const modalTextElement = document.createElement('p');
+    modalTextElement.classList.add('modal__text');
+    modalTextElement.innerHTML = `You have completed the level in <span class="modal__time">${timeElapsed}</span> seconds.`;
+    modalBodyElement.appendChild(modalTextElement);
+    const modalButtonsElement = document.createElement('div');
+    modalButtonsElement.classList.add('modal__buttons');
+    const modalSecondaryButton = createButtonElement('Reset', renderLevel);
+    modalSecondaryButton.classList.add('modal__button');
+    modalSecondaryButton.classList.add('modal__button--secondary');
+    modalButtonsElement.appendChild(modalSecondaryButton);
+    const modalPrimaryButton = createButtonElement('Back to Menu', renderMenu);
+    modalPrimaryButton.classList.add('modal__button');
+    modalPrimaryButton.classList.add('modal__button--primary');
+    modalButtonsElement.appendChild(modalPrimaryButton);
+    modalBodyElement.appendChild(modalButtonsElement);
+    modalElement.appendChild(modalBodyElement);
+    return modalElement;
 };
 const handleSolvedAxis = (row, axis) => {
     new Audio('static/axis.m4a').play();
@@ -34,7 +57,16 @@ const handleSolvedAxis = (row, axis) => {
         }
     });
 };
+const createCellElement = (row, column) => {
+    const cellElement = document.createElement('div');
+    cellElement.classList.add('cell');
+    cellElement.dataset.row = String(row);
+    cellElement.dataset.column = String(column);
+    cellElement.tabIndex = 0;
+    return cellElement;
+};
 const createBoardElement = (nono) => {
+    const startTime = new Date().getTime();
     const handleClick = (event, action) => {
         event.preventDefault();
         const element = event.target;
@@ -42,19 +74,12 @@ const createBoardElement = (nono) => {
             element.classList.contains('solved')) {
             return;
         }
-        const column = Number(element.dataset.column);
-        const row = Number(element.dataset.row);
+        const [row, column] = getElementPosition(element);
         if (action === 'check') {
             new Audio('static/left.m4a').play();
             element.classList.remove('unknown');
             element.classList.toggle('checked');
             nono.toggle(column, row);
-            if (nono.solvedRow(row)) {
-                handleSolvedAxis(row, 'row');
-            }
-            if (nono.solvedColumn(column)) {
-                handleSolvedAxis(column, 'column');
-            }
         }
         else {
             new Audio('static/right.m4a').play();
@@ -62,9 +87,16 @@ const createBoardElement = (nono) => {
             element.classList.toggle('unknown');
             nono.uncheck(column, row);
         }
+        if (nono.solvedRow(row)) {
+            handleSolvedAxis(row, 'row');
+        }
+        if (nono.solvedColumn(column)) {
+            handleSolvedAxis(column, 'column');
+        }
         if (nono.solved) {
+            const totalTime = Math.floor((new Date().getTime() - startTime) / 1000);
             new Audio('static/win.m4a').play();
-            containerElement.appendChild(createCongratulationsElement());
+            containerElement.appendChild(createModal(totalTime));
         }
     };
     const [width, height] = nono.size;
@@ -73,11 +105,7 @@ const createBoardElement = (nono) => {
     boardElement.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
     for (let i = 0; i < height; i++) {
         for (let j = 0; j < width; j++) {
-            const cellElement = document.createElement('div');
-            cellElement.classList.add('cell');
-            cellElement.dataset.column = String(j);
-            cellElement.dataset.row = String(i);
-            boardElement.appendChild(cellElement);
+            boardElement.appendChild(createCellElement(i, j));
         }
     }
     boardElement.addEventListener('click', (e) => {
@@ -85,6 +113,36 @@ const createBoardElement = (nono) => {
     });
     boardElement.addEventListener('contextmenu', (e) => {
         handleClick(e, 'mark');
+    });
+    boardElement.addEventListener('keyup', (e) => {
+        const element = document.activeElement;
+        if (!(element instanceof HTMLDivElement)) {
+            return;
+        }
+        let [row, column] = getElementPosition(element);
+        console.log(row, column);
+        console.log(e.key);
+        switch (e.key) {
+            case 'Enter':
+                element.click();
+                return;
+            case 'ArrowUp':
+                row--;
+                break;
+            case 'ArrowDown':
+                row++;
+                break;
+            case 'ArrowLeft':
+                column--;
+                break;
+            case 'ArrowRight':
+                column++;
+                break;
+        }
+        const nextFocusTarget = document.querySelector(`[data-row="${row}"][data-column="${column}"]`);
+        if (nextFocusTarget) {
+            nextFocusTarget.focus();
+        }
     });
     return boardElement;
 };
@@ -98,19 +156,31 @@ const createGameElement = (nono) => {
 };
 const createButtonElement = (text, callback) => {
     const button = document.createElement('button');
-    button.classList.add('menu__button');
     button.textContent = text;
     if (callback) {
         button.addEventListener('click', callback);
     }
+    button.addEventListener('click', () => {
+        new Audio('static/button.m4a').play();
+    });
+    return button;
+};
+const createBackButtonElement = (callback) => {
+    const button = createButtonElement('Menu', callback);
+    button.classList.add('back');
+    return button;
+};
+const createMenuButtonElement = (text, callback) => {
+    const button = createButtonElement(text, callback);
+    button.classList.add('menu__button');
     return button;
 };
 const createMenuElement = () => {
     const menuElement = document.createElement('div');
     menuElement.classList.add('menu');
-    menuElement.appendChild(createButtonElement('Random', renderLevel));
-    menuElement.appendChild(createButtonElement('Levels'));
-    menuElement.appendChild(createButtonElement('Editor'));
+    menuElement.appendChild(createMenuButtonElement('Random', renderLevel));
+    menuElement.appendChild(createMenuButtonElement('Levels'));
+    menuElement.appendChild(createMenuButtonElement('Editor'));
     return menuElement;
 };
 const renderLevel = () => {
@@ -118,13 +188,11 @@ const renderLevel = () => {
     const randomHeight = Math.floor(Math.random() * 8) + 2;
     const nono = Nonogram.random(randomWidth, randomHeight);
     containerElement.innerHTML = '';
+    containerElement.appendChild(createBackButtonElement(renderMenu));
     containerElement.appendChild(createGameElement(nono));
-    backElement.classList.remove('hidden');
 };
 const renderMenu = () => {
     containerElement.innerHTML = '';
     containerElement.appendChild(createMenuElement());
-    backElement.classList.add('hidden');
 };
-backElement.addEventListener('click', renderMenu);
 renderMenu();
