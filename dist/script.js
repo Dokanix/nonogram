@@ -97,6 +97,8 @@ const createBoardElement = (nono) => {
             const totalTime = Math.floor((new Date().getTime() - startTime) / 1000);
             new Audio('static/win.m4a').play();
             containerElement.appendChild(createModal(totalTime));
+            const focusTarget = document.querySelector('.modal__button--secondary');
+            focusTarget.focus();
         }
     };
     const [width, height] = nono.size;

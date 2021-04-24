@@ -141,6 +141,10 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
       const totalTime = Math.floor((new Date().getTime() - startTime) / 1000);
       new Audio('static/win.m4a').play();
       containerElement.appendChild(createModal(totalTime));
+      const focusTarget = document.querySelector(
+        '.modal__button--secondary'
+      ) as HTMLDivElement;
+      focusTarget.focus();
     }
   };
 
