@@ -22,8 +22,6 @@ document.addEventListener('mouseup', (e) => {
 let currentScale = 1;
 
 document.addEventListener('wheel', (e) => {
-  console.log(currentScale);
-
   const gameElement = document.querySelector('.game') as HTMLDivElement;
 
   if (gameElement) {
@@ -35,7 +33,6 @@ document.addEventListener('wheel', (e) => {
       Math.min(currentScale, 1.5),
       0.5
     )}`;
-    console.log(currentScale);
   }
 });
 
@@ -155,75 +152,7 @@ const createCellElement = (row: number, column: number): HTMLDivElement => {
 const createBoardElement = (nono: Nonogram): HTMLDivElement => {
   const startTime = new Date().getTime();
 
-  const handleHover = (event: MouseEvent) => {
-    if (!mouseDown) {
-      return;
-    }
-
-    const element = event.target as HTMLDivElement;
-
-    if (
-      !element.classList.contains('cell') ||
-      element.classList.contains('solved')
-    ) {
-      return;
-    }
-
-    const [row, column] = getElementPosition(element);
-
-    if (!element.classList.contains('checked')) {
-      new Audio('static/left.m4a').play();
-      element.classList.remove('unknown');
-      element.classList.add('checked');
-      nono.check(column, row);
-    }
-
-    if (nono.solvedRow(row)) {
-      handleSolvedAxis(row, 'row');
-    }
-
-    if (nono.solvedColumn(column)) {
-      handleSolvedAxis(column, 'column');
-    }
-
-    if (nono.solved) {
-      const totalTime = Math.floor((new Date().getTime() - startTime) / 1000);
-      new Audio('static/win.m4a').play();
-      containerElement.appendChild(createModal(totalTime));
-      document.querySelector('.modal__body')?.classList.add('visible');
-      const focusTarget = document.querySelector(
-        '.modal__button--secondary'
-      ) as HTMLDivElement;
-      focusTarget.focus();
-    }
-  };
-
-  const handleClick = (event: MouseEvent, action: Action) => {
-    event.preventDefault();
-
-    const element = event.target as HTMLDivElement;
-
-    if (
-      !element.classList.contains('cell') ||
-      element.classList.contains('solved')
-    ) {
-      return;
-    }
-
-    const [row, column] = getElementPosition(element);
-
-    if (action === 'check') {
-      new Audio('static/left.m4a').play();
-      element.classList.remove('unknown');
-      element.classList.toggle('checked');
-      nono.toggle(column, row);
-    } else {
-      new Audio('static/right.m4a').play();
-      element.classList.remove('checked');
-      element.classList.toggle('unknown');
-      nono.uncheck(column, row);
-    }
-
+  const checkIfSolved = (column: number, row: number) => {
     if (nono.solvedRow(row)) {
       handleSolvedAxis(row, 'row');
     }
@@ -243,33 +172,40 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
     }
   };
 
-  const [width, height] = nono.size;
+  const check = (element: HTMLDivElement): void => {
+    const [row, column] = getElementPosition(element);
 
-  const boardElement = document.createElement('div');
-  boardElement.classList.add('board');
-  boardElement.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
+    new Audio('static/left.m4a').play();
+    element.classList.remove('unknown');
+    element.classList.toggle('checked');
+    nono.check(column, row);
+    nono.printBoard();
+    checkIfSolved(column, row);
+  };
 
-  for (let i = 0; i < height; i++) {
-    for (let j = 0; j < width; j++) {
-      boardElement.appendChild(createCellElement(i, j));
-    }
-  }
+  const toggle = (element: HTMLDivElement): void => {
+    const [row, column] = getElementPosition(element);
 
-  boardElement.addEventListener('mousedown', (e) => {
-    if (e.button === 0) {
-      handleClick(e, 'check');
-    }
-  });
+    new Audio('static/left.m4a').play();
+    element.classList.remove('unknown');
+    element.classList.toggle('checked');
+    nono.toggle(column, row);
+    nono.printBoard();
+    checkIfSolved(column, row);
+  };
 
-  boardElement.addEventListener('contextmenu', (e) => {
-    handleClick(e, 'mark');
-  });
+  const mark = (element: HTMLDivElement): void => {
+    const [row, column] = getElementPosition(element);
 
-  boardElement.addEventListener('mouseover', (e) => {
-    handleHover(e);
-  });
+    new Audio('static/right.m4a').play();
+    element.classList.remove('checked');
+    element.classList.add('unknown');
+    nono.uncheck(column, row);
+    nono.printBoard();
+    checkIfSolved(column, row);
+  };
 
-  boardElement.addEventListener('keyup', (e) => {
+  const handleKey = (e: KeyboardEvent): void => {
     const element = document.activeElement;
 
     if (!(element instanceof HTMLDivElement)) {
@@ -277,12 +213,10 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
     }
 
     let [row, column] = getElementPosition(element);
-    console.log(row, column);
-    console.log(e.key);
 
     switch (e.key) {
       case 'Enter':
-        element.click();
+        toggle(element);
         return;
       case 'ArrowUp':
         row--;
@@ -305,6 +239,76 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
     if (nextFocusTarget) {
       nextFocusTarget.focus();
     }
+  };
+
+  const handleHover = (event: MouseEvent): void => {
+    if (!mouseDown) {
+      return;
+    }
+
+    const element = event.target as HTMLDivElement;
+
+    if (
+      !element.classList.contains('cell') ||
+      element.classList.contains('solved')
+    ) {
+      return;
+    }
+
+    const [row, column] = getElementPosition(element);
+
+    if (!element.classList.contains('checked')) {
+      check(element);
+    }
+
+    checkIfSolved(column, row);
+  };
+
+  const handleClick = (event: MouseEvent, action: Action): void => {
+    event.preventDefault();
+
+    const element = event.target as HTMLDivElement;
+
+    if (
+      !element.classList.contains('cell') ||
+      element.classList.contains('solved')
+    ) {
+      return;
+    }
+
+    if (action === 'check') {
+      toggle(element);
+    } else {
+      mark(element);
+    }
+  };
+
+  const [width, height] = nono.size;
+
+  const boardElement = document.createElement('div');
+  boardElement.classList.add('board');
+  boardElement.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
+
+  for (let i = 0; i < height; i++) {
+    for (let j = 0; j < width; j++) {
+      boardElement.appendChild(createCellElement(i, j));
+    }
+  }
+
+  boardElement.addEventListener('mousedown', (e) => {
+    if (e.button == 0) handleClick(e, 'check');
+  });
+
+  boardElement.addEventListener('contextmenu', (e) => {
+    handleClick(e, 'mark');
+  });
+
+  boardElement.addEventListener('mouseover', (e) => {
+    handleHover(e);
+  });
+
+  boardElement.addEventListener('keyup', (e) => {
+    handleKey(e);
   });
 
   return boardElement;

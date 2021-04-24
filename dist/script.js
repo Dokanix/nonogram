@@ -13,12 +13,10 @@ document.addEventListener('mouseup', (e) => {
 });
 let currentScale = 1;
 document.addEventListener('wheel', (e) => {
-    console.log(currentScale);
     const gameElement = document.querySelector('.game');
     if (gameElement) {
         currentScale = Math.max(Math.min(currentScale * (1 - e.deltaY * 0.001), 1.5), 0.5);
         gameElement.style.transform = `scale(${Math.max(Math.min(currentScale, 1.5), 0.5)}`;
-        console.log(currentScale);
     }
 });
 const getElementPosition = (element) => {
@@ -102,58 +100,7 @@ const createCellElement = (row, column) => {
 };
 const createBoardElement = (nono) => {
     const startTime = new Date().getTime();
-    const handleHover = (event) => {
-        var _a;
-        if (!mouseDown) {
-            return;
-        }
-        const element = event.target;
-        if (!element.classList.contains('cell') ||
-            element.classList.contains('solved')) {
-            return;
-        }
-        const [row, column] = getElementPosition(element);
-        if (!element.classList.contains('checked')) {
-            new Audio('static/left.m4a').play();
-            element.classList.remove('unknown');
-            element.classList.add('checked');
-            nono.check(column, row);
-        }
-        if (nono.solvedRow(row)) {
-            handleSolvedAxis(row, 'row');
-        }
-        if (nono.solvedColumn(column)) {
-            handleSolvedAxis(column, 'column');
-        }
-        if (nono.solved) {
-            const totalTime = Math.floor((new Date().getTime() - startTime) / 1000);
-            new Audio('static/win.m4a').play();
-            containerElement.appendChild(createModal(totalTime));
-            (_a = document.querySelector('.modal__body')) === null || _a === void 0 ? void 0 : _a.classList.add('visible');
-            const focusTarget = document.querySelector('.modal__button--secondary');
-            focusTarget.focus();
-        }
-    };
-    const handleClick = (event, action) => {
-        event.preventDefault();
-        const element = event.target;
-        if (!element.classList.contains('cell') ||
-            element.classList.contains('solved')) {
-            return;
-        }
-        const [row, column] = getElementPosition(element);
-        if (action === 'check') {
-            new Audio('static/left.m4a').play();
-            element.classList.remove('unknown');
-            element.classList.toggle('checked');
-            nono.toggle(column, row);
-        }
-        else {
-            new Audio('static/right.m4a').play();
-            element.classList.remove('checked');
-            element.classList.toggle('unknown');
-            nono.uncheck(column, row);
-        }
+    const checkIfSolved = (column, row) => {
         if (nono.solvedRow(row)) {
             handleSolvedAxis(row, 'row');
         }
@@ -168,37 +115,42 @@ const createBoardElement = (nono) => {
             focusTarget.focus();
         }
     };
-    const [width, height] = nono.size;
-    const boardElement = document.createElement('div');
-    boardElement.classList.add('board');
-    boardElement.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
-    for (let i = 0; i < height; i++) {
-        for (let j = 0; j < width; j++) {
-            boardElement.appendChild(createCellElement(i, j));
-        }
-    }
-    boardElement.addEventListener('mousedown', (e) => {
-        if (e.button === 0) {
-            handleClick(e, 'check');
-        }
-    });
-    boardElement.addEventListener('contextmenu', (e) => {
-        handleClick(e, 'mark');
-    });
-    boardElement.addEventListener('mouseover', (e) => {
-        handleHover(e);
-    });
-    boardElement.addEventListener('keyup', (e) => {
+    const check = (element) => {
+        const [row, column] = getElementPosition(element);
+        new Audio('static/left.m4a').play();
+        element.classList.remove('unknown');
+        element.classList.toggle('checked');
+        nono.check(column, row);
+        nono.printBoard();
+        checkIfSolved(column, row);
+    };
+    const toggle = (element) => {
+        const [row, column] = getElementPosition(element);
+        new Audio('static/left.m4a').play();
+        element.classList.remove('unknown');
+        element.classList.toggle('checked');
+        nono.toggle(column, row);
+        nono.printBoard();
+        checkIfSolved(column, row);
+    };
+    const mark = (element) => {
+        const [row, column] = getElementPosition(element);
+        new Audio('static/right.m4a').play();
+        element.classList.remove('checked');
+        element.classList.add('unknown');
+        nono.uncheck(column, row);
+        nono.printBoard();
+        checkIfSolved(column, row);
+    };
+    const handleKey = (e) => {
         const element = document.activeElement;
         if (!(element instanceof HTMLDivElement)) {
             return;
         }
         let [row, column] = getElementPosition(element);
-        console.log(row, column);
-        console.log(e.key);
         switch (e.key) {
             case 'Enter':
-                element.click();
+                toggle(element);
                 return;
             case 'ArrowUp':
                 row--;
@@ -217,6 +169,57 @@ const createBoardElement = (nono) => {
         if (nextFocusTarget) {
             nextFocusTarget.focus();
         }
+    };
+    const handleHover = (event) => {
+        if (!mouseDown) {
+            return;
+        }
+        const element = event.target;
+        if (!element.classList.contains('cell') ||
+            element.classList.contains('solved')) {
+            return;
+        }
+        const [row, column] = getElementPosition(element);
+        if (!element.classList.contains('checked')) {
+            check(element);
+        }
+        checkIfSolved(column, row);
+    };
+    const handleClick = (event, action) => {
+        event.preventDefault();
+        const element = event.target;
+        if (!element.classList.contains('cell') ||
+            element.classList.contains('solved')) {
+            return;
+        }
+        if (action === 'check') {
+            toggle(element);
+        }
+        else {
+            mark(element);
+        }
+    };
+    const [width, height] = nono.size;
+    const boardElement = document.createElement('div');
+    boardElement.classList.add('board');
+    boardElement.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
+    for (let i = 0; i < height; i++) {
+        for (let j = 0; j < width; j++) {
+            boardElement.appendChild(createCellElement(i, j));
+        }
+    }
+    boardElement.addEventListener('mousedown', (e) => {
+        if (e.button == 0)
+            handleClick(e, 'check');
+    });
+    boardElement.addEventListener('contextmenu', (e) => {
+        handleClick(e, 'mark');
+    });
+    boardElement.addEventListener('mouseover', (e) => {
+        handleHover(e);
+    });
+    boardElement.addEventListener('keyup', (e) => {
+        handleKey(e);
     });
     return boardElement;
 };
