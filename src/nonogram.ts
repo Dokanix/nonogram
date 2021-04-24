@@ -3,6 +3,20 @@ interface Helpers {
   column: number[][];
 }
 
+function equals<T extends any[] | []>(left: T, right: T): boolean {
+  if (left.length !== right.length) {
+    return false;
+  }
+
+  for (let [index, value] of left.entries()) {
+    if (value !== right[index]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 export default class Nonogram {
   private solution: boolean[][] = [];
   private board: boolean[][] = [];
@@ -24,6 +38,50 @@ export default class Nonogram {
       }
     }
     return true;
+  }
+
+  solvedRow(row: number): boolean {
+    const helpers = this.rowHelpers[row];
+    const current: number[] = [];
+    let nextValue = true;
+
+    for (let value of this.board[row]) {
+      const lastIndex = current.length - 1;
+
+      if (value && nextValue) {
+        current.push(1);
+        nextValue = false;
+      } else if (value) {
+        current[lastIndex] = current[lastIndex] + 1;
+      } else {
+        nextValue = true;
+      }
+    }
+
+    return equals(helpers, current);
+  }
+
+  solvedColumn(column: number): boolean {
+    const helpers = this.columnHelpers[column];
+    const current: number[] = [];
+    let nextValue = true;
+
+    for (let rowIndex = 0; rowIndex < this.height; rowIndex++) {
+      let lastIndex = current.length - 1;
+      let value = this.board[rowIndex][column];
+
+      if (value && nextValue) {
+        current.push(1);
+        nextValue = false;
+      } else if (value) {
+        current[lastIndex]++;
+      } else {
+        nextValue = true;
+      }
+    }
+
+    console.log(helpers, current);
+    return equals(helpers, current);
   }
 
   get size(): [number, number] {

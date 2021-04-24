@@ -1,7 +1,7 @@
 import Nonogram from './nonogram.js';
 
 type Axis = 'column' | 'row';
-type State = 'checked' | 'unknown';
+type Action = 'check' | 'mark';
 
 const containerElement = document.querySelector('.container')!;
 const backElement = document.querySelector('.back')!;
@@ -41,7 +41,7 @@ const createCongratulationsElement = (): HTMLHeadingElement => {
 };
 
 const createBoardElement = (nono: Nonogram): HTMLDivElement => {
-  const handleClick = (event: MouseEvent, state: State) => {
+  const handleClick = (event: MouseEvent, state: Action) => {
     event.preventDefault();
 
     const element = event.target as HTMLElement;
@@ -50,7 +50,7 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
       const column = Number(element.dataset.column);
       const row = Number(element.dataset.row);
 
-      if (state === 'checked') {
+      if (state === 'check') {
         new Audio('static/left.m4a').play();
         element.classList.remove('unknown');
         element.classList.toggle('checked');
@@ -60,6 +60,28 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
         element.classList.remove('checked');
         element.classList.toggle('unknown');
         nono.uncheck(column, row);
+      }
+
+      if (nono.solvedRow(row)) {
+        const rowElements = document.querySelectorAll(`[data-row="${row}"`);
+
+        rowElements.forEach((elem) => {
+          if (!elem.classList.contains('checked')) {
+            elem.classList.add('unknown');
+          }
+        });
+      }
+
+      if (nono.solvedColumn(column)) {
+        const columnElements = document.querySelectorAll(
+          `[data-column="${column}"]`
+        );
+
+        columnElements.forEach((elem) => {
+          if (!elem.classList.contains('checked')) {
+            elem.classList.add('unknown');
+          }
+        });
       }
     }
 
@@ -88,11 +110,11 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
   }
 
   boardElement.addEventListener('click', (e) => {
-    handleClick(e, 'checked');
+    handleClick(e, 'check');
   });
 
   boardElement.addEventListener('contextmenu', (e) => {
-    handleClick(e, 'unknown');
+    handleClick(e, 'mark');
   });
 
   return boardElement;
