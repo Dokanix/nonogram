@@ -123,7 +123,9 @@ const createWinModal = (timeElapsed: number): HTMLDivElement => {
   const modalButtonsElement = document.createElement('div');
   modalButtonsElement.classList.add('modal__buttons');
 
-  const modalSecondaryButton = createButtonElement('Reset', renderLevel);
+  const modalSecondaryButton = createButtonElement('Reset', () => {
+    renderLevel();
+  });
   modalSecondaryButton.classList.add('modal__button');
   modalSecondaryButton.classList.add('modal__button--secondary');
 
