@@ -67,8 +67,11 @@ export default class Nonogram {
         };
     }
     validateSize(width, height = 5) {
-        if (width < 1 || height > 9 || width > 9 || width < 1) {
-            throw new Error(`Invalid argument. The length of an axis must be between 2 and 10.`);
+        if (width < Nonogram.minSize ||
+            height > Nonogram.maxSize ||
+            width > Nonogram.maxSize ||
+            width < Nonogram.minSize) {
+            throw new Error(`Invalid argument. The length of an axis must be between ${Nonogram.minSize} and ${Nonogram.maxSize}.`);
         }
     }
     validateBoard(solution) {
@@ -229,6 +232,7 @@ export default class Nonogram {
                 gameHash += cell ? '1' : '0';
             }
         }
+        gameHash = parseInt(gameHash, 2).toString(36);
         urlQuery += gameHash;
         return urlQuery;
     }
@@ -247,15 +251,20 @@ export default class Nonogram {
         let solution = Array(height)
             .fill(null)
             .map(() => []);
+        const level = parseInt(hash, 36)
+            .toString(2)
+            .padStart(width * height, '0');
         for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
                 const index = i * width + j;
-                solution[i][j] = hash[index] === '1' ? true : false;
+                solution[i][j] = level[index] === '1' ? true : false;
             }
         }
         return new Nonogram(solution);
     }
 }
+Nonogram.maxSize = 20;
+Nonogram.minSize = 2;
 let solution = [
     [true, false, true, true, true],
     [false, false, false, false, true],

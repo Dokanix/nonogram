@@ -1,7 +1,11 @@
 import Nonogram from './nonogram.js';
+import Axis from './types/axis';
+import Action from './types/actions';
+import Emitter from './types/emitters';
 
-type Axis = 'column' | 'row';
-type Action = 'check' | 'mark';
+import AudioPlayer from './AudioPlayer.js';
+
+const player = new AudioPlayer();
 
 const containerElement = document.querySelector('.container')!;
 
@@ -124,7 +128,7 @@ const createWinModal = (timeElapsed: number): HTMLDivElement => {
   modalButtonsElement.classList.add('modal__buttons');
 
   const modalSecondaryButton = createButtonElement('Reset', () => {
-    renderLevel();
+    renderRandomLevel();
   });
   modalSecondaryButton.classList.add('modal__button');
   modalSecondaryButton.classList.add('modal__button--secondary');
@@ -144,37 +148,83 @@ const createWinModal = (timeElapsed: number): HTMLDivElement => {
   return modalElement;
 };
 
-const createNumberInput = (name: string): HTMLInputElement => {
-  const element = document.createElement('input');
-  element.classList.add('modal__input');
-  element.type = 'number';
-  element.placeholder = name;
-  element.min = '2';
-  element.max = '10';
+const createBoardSelector = (dimensions: {
+  width: number;
+  height: number;
+}): HTMLDivElement => {
+  const boardElement = document.createElement('div');
+  boardElement.classList.add('boardSelector__board');
+  boardElement.style.gridTemplateColumns = `repeat(${dimensions.width}, 1fr)`;
+  boardElement.style.gridTemplateRows = `repeat(${dimensions.height}, 1fr)`;
 
-  return element;
+  for (let i = 0; i < dimensions.width * dimensions.height; i++) {
+    const cellElement = document.createElement('div');
+    cellElement.classList.add('boardSelector__cell');
+    boardElement.appendChild(cellElement);
+  }
+
+  return boardElement;
 };
 
 const createPlayModal = (): HTMLDivElement => {
+  const dimensions = {
+    width: 3,
+    height: 3,
+  };
+
   const modalElement = createModal('Level Settings');
   const modalBodyElement = modalElement.querySelector(
     '.modal__body'
   ) as HTMLDivElement;
 
-  const widthInput = createNumberInput('Width');
-  const heightInput = createNumberInput('Height');
+  const boardHeaderElement = document.createElement('h2');
+  boardHeaderElement.textContent = 'Choose board size';
 
-  modalBodyElement.appendChild(widthInput);
-  modalBodyElement.appendChild(heightInput);
+  modalBodyElement.appendChild(boardHeaderElement);
+
+  const boardSelectorElement = document.createElement('div');
+  boardSelectorElement.classList.add('boardSelector');
+
+  let boardElement = createBoardSelector(dimensions);
+
+  boardSelectorElement.appendChild(boardElement);
+
+  const heightAdder = document.createElement('div');
+  heightAdder.classList.add('boardSelector__adder');
+
+  const heightAdderButton = createButtonElement('+', () => {
+    dimensions.height = Math.min(dimensions.height + 1, Nonogram.maxSize);
+    dimensions.width = Math.min(dimensions.width + 1, Nonogram.maxSize);
+    const newBoardElement = createBoardSelector(dimensions);
+    boardSelectorElement.replaceChild(newBoardElement, boardElement);
+    boardElement = newBoardElement;
+  });
+  heightAdderButton.classList.add('boardSelector__button');
+
+  const heightRemoverButton = createButtonElement('-', () => {
+    dimensions.height = Math.max(dimensions.height - 1, Nonogram.minSize);
+    dimensions.width = Math.max(dimensions.width - 1, Nonogram.minSize);
+    const newBoardElement = createBoardSelector(dimensions);
+    boardSelectorElement.replaceChild(newBoardElement, boardElement);
+    boardElement = newBoardElement;
+  });
+  heightRemoverButton.classList.add('boardSelector__button');
+
+  heightAdder.appendChild(heightRemoverButton);
+  heightAdder.appendChild(heightAdderButton);
+
+  boardSelectorElement.appendChild(heightAdder);
+
+  modalBodyElement.appendChild(boardSelectorElement);
 
   const modalButtonsElement = document.createElement('div');
   modalButtonsElement.classList.add('modal__buttons');
 
   const modalPrimaryButton = createButtonElement('Play', () => {
-    const width = Number(widthInput.value);
-    const height = Number(heightInput.value);
+    const width = Number(dimensions.width);
+    const height = Number(dimensions.height);
 
-    renderLevel(width, height);
+    renderRandomLevel(width, height);
   });
   modalPrimaryButton.classList.add('modal__button');
   modalPrimaryButton.classList.add('modal__button--primary');
@@ -187,7 +237,7 @@ const createPlayModal = (): HTMLDivElement => {
 };
 
 const handleSolvedAxis = (row: number, axis: Axis) => {
-  new Audio('static/axis.m4a').play();
+  player.play('axis');
 
   const rowElements = document.querySelectorAll(`[data-${axis}="${row}"`);
 
@@ -223,7 +273,7 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
 
     if (nono.solved) {
       const totalTime = Math.floor((new Date().getTime() - startTime) / 1000);
-      new Audio('static/win.m4a').play();
+      player.play('win');
       containerElement.appendChild(createWinModal(totalTime));
       const focusTarget = document.querySelector(
         '.modal__button--secondary'
@@ -235,7 +285,7 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
   const check = (element: HTMLDivElement): void => {
     const [row, column] = getElementPosition(element);
 
-    new Audio('static/left.m4a').play();
+    player.play('check');
     element.classList.remove('unknown');
     element.classList.toggle('checked');
     nono.check(column, row);
@@ -246,7 +296,7 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
   const toggle = (element: HTMLDivElement): void => {
     const [row, column] = getElementPosition(element);
 
-    new Audio('static/left.m4a').play();
+    player.play('check');
     element.classList.remove('unknown');
     element.classList.toggle('checked');
     nono.toggle(column, row);
@@ -257,9 +307,9 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
   const mark = (element: HTMLDivElement): void => {
     const [row, column] = getElementPosition(element);
 
-    new Audio('static/right.m4a').play();
+    player.play('mark');
     element.classList.remove('checked');
-    element.classList.add('unknown');
+    element.classList.toggle('unknown');
     nono.uncheck(column, row);
     nono.printBoard();
     checkIfSolved(column, row);
@@ -397,7 +447,7 @@ const createButtonElement = (
   }
 
   button.addEventListener('click', () => {
-    new Audio('static/button.m4a').play();
+    player.play('button');
   });
 
   return button;
@@ -426,7 +476,7 @@ const createMenuElement = (): HTMLDivElement => {
 
   menuElement.appendChild(
     createMenuButtonElement('Random', () => {
-      renderLevel();
+      renderRandomLevel();
     })
   );
   menuElement.appendChild(
@@ -440,7 +490,7 @@ const createMenuElement = (): HTMLDivElement => {
   return menuElement;
 };
 
-const renderLevel = (width?: number, height?: number) => {
+const renderRandomLevel = (width?: number, height?: number): void => {
   currentScale = 1;
 
   width = width ?? Math.floor(Math.random() * 8) + 2;
@@ -451,6 +501,14 @@ const renderLevel = (width?: number, height?: number) => {
   containerElement.innerHTML = '';
   containerElement.appendChild(createBackButtonElement(renderMenu));
   containerElement.appendChild(createGameElement(nono));
+
+  window.location.search = nono.encode();
+};
+
+const renderLevel = (nono: Nonogram): void => {
+  containerElement.innerHTML = '';
+  containerElement.appendChild(createBackButtonElement(renderMenu));
+  containerElement.appendChild(createGameElement(nono));
 };
 
 const renderMenu = () => {
@@ -458,4 +516,12 @@ const renderMenu = () => {
   containerElement.appendChild(createMenuElement());
 };
 
-renderMenu();
+console.log(window.location);
+
+if (window.location.search) {
+  const levelMap = window.location.search.slice(1);
+  const nono = Nonogram.decode(levelMap);
+  renderLevel(nono);
+} else {
+  renderMenu();
+}

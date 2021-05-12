@@ -24,6 +24,8 @@ export default class Nonogram {
   private columnHelpers: number[][] = [];
   private width: number = 2;
   private height: number = 2;
+  static maxSize = 20;
+  static minSize = 2;
 
   constructor(solution: boolean[][]) {
     this.validateBoard(solution);
@@ -88,9 +90,14 @@ export default class Nonogram {
   }
 
   private validateSize(width: number, height: number = 5): void {
-    if (width < 1 || height > 9 || width > 9 || width < 1) {
+    if (
+      width < Nonogram.minSize ||
+      height > Nonogram.maxSize ||
+      width > Nonogram.maxSize ||
+      width < Nonogram.minSize
+    ) {
       throw new Error(
-        `Invalid argument. The length of an axis must be between 2 and 10.`
+        `Invalid argument. The length of an axis must be between ${Nonogram.minSize} and ${Nonogram.maxSize}.`
       );
     }
   }
@@ -309,8 +316,9 @@ export default class Nonogram {
       }
     }
 
-    urlQuery += gameHash;
+    gameHash = parseInt(gameHash, 2).toString(36);
 
+    urlQuery += gameHash;
     return urlQuery;
   }
 
@@ -334,10 +342,14 @@ export default class Nonogram {
       .fill(null)
       .map(() => []);
 
+    const level = parseInt(hash, 36)
+      .toString(2)
+      .padStart(width * height, '0');
+
     for (let i = 0; i < height; i++) {
       for (let j = 0; j < width; j++) {
         const index = i * width + j;
-        solution[i][j] = hash[index] === '1' ? true : false;
+        solution[i][j] = level[index] === '1' ? true : false;
       }
     }
 

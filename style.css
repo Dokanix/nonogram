@@ -4,6 +4,7 @@ html {
   --color-light: rgba(255, 255, 240);
   --color-white: white;
   --color-red: #ff6161;
+  --color-grayred: #d7cccc;
   --color-green: #2c835a;
   font-family: 'Merienda', cursive;
 }
@@ -145,6 +146,7 @@ body > * {
 .game {
   max-width: fit-content;
   display: grid;
+  transform-origin: top;
   grid-template-areas:
     '. col'
     'row game';
@@ -200,6 +202,7 @@ body > * {
 }
 
 .cell {
+  border: 1px solid rgba(0, 0, 0, 0.1);
   overflow: hidden;
   position: relative;
   box-sizing: border-box;
@@ -336,9 +339,65 @@ body > * {
   right: 0.8rem;
   top: 0.8rem;
   color: gray;
+  background: none;
 }
 
 .modal__button--exit:hover,
 .modal__button--exit:focus {
   color: var(--color-green);
+}
+
+/* BOARD SELECTOR */
+
+.boardSelector {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: 1fr;
+}
+
+.boardSelector__board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 50rem;
+  height: 50rem;
+}
+
+.boardSelector__cell {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 5%;
+  margin: 5%;
+  box-shadow: 0.2rem 0.2rem 0.8rem rgba(0, 0, 0, 0.1);
+  aspect-ratio: 1/1;
+}
+
+.boardSelector__adder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.boardSelector__button {
+  border: none;
+  box-shadow: 0.2rem 0.2rem 0.8rem rgba(0, 0, 0, 0.1);
+  border-radius: 0.4rem;
+  font-size: 1.6rem;
+  width: 3.2rem;
+  height: 3.2rem;
+  background-color: var(--color-grayred);
+  cursor: pointer;
+  transition: all 0.2s;
+  margin: 0.2rem;
+}
+
+.boardSelector__button:hover,
+.boardSelector__button:focus {
+  outline: none;
+  transform: translateY(-0.1rem);
+  filter: brightness(110%);
+}
+
+.boardSelector__button:active {
+  transform: translateY(0);
+  box-shadow: none;
+  filter: brightness(90%);
 }
