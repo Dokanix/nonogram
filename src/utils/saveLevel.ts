@@ -4,7 +4,7 @@ const saveLevel = (boardHash: string, bestTime: number): void => {
   if (levelsJSON) {
     const levels = JSON.parse(levelsJSON) as { [key: string]: number };
 
-    if (levels[boardHash]) {
+    if (levels[boardHash] !== undefined) {
       return;
     }
 

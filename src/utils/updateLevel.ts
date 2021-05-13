@@ -5,9 +5,9 @@ const updateLevel = (boardHash: string, bestTime: number): void => {
     return;
   }
 
-  const levels = JSON.parse(levelsJSON) as { [key: string]: number };
+  const levels = JSON.parse(levelsJSON) as { [key: string]: number | null };
 
-  if (levels[boardHash]) {
+  if (levels[boardHash] !== undefined) {
     levels[boardHash] = bestTime;
   }
 

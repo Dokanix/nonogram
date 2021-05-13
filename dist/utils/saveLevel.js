@@ -2,7 +2,7 @@ const saveLevel = (boardHash, bestTime) => {
     const levelsJSON = localStorage.getItem('levels');
     if (levelsJSON) {
         const levels = JSON.parse(levelsJSON);
-        if (levels[boardHash]) {
+        if (levels[boardHash] !== undefined) {
             return;
         }
         levels[boardHash] = bestTime;

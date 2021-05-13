@@ -1,5 +1,6 @@
 import createModal from './modal.js';
 import createLevelElement from './level.js';
+import createElement from '../utils/createElement.js';
 const createLevelsModal = () => {
     const containerElement = document.querySelector('.container');
     const modalElement = createModal('Saved Levels');
@@ -14,6 +15,9 @@ const createLevelsModal = () => {
             const levelElement = createLevelElement([Number(width), Number(height)], levels[level], level);
             modalBodyElement.appendChild(levelElement);
         }
+    }
+    else {
+        modalBodyElement.appendChild(createElement('p', 'modal__text', 'Empty! If you save a level it will appear in here.'));
     }
     return modalElement;
 };

@@ -1,20 +1,16 @@
 import Nonogram from '../nonogram.js';
 import renderMenu from './menu.js';
-import saveLevel from '../utils/saveLevel.js';
-import createButtonElement from '../components/button.js';
 import createBackButtonElement from '../components/backButton.js';
 import createGameElement from '../components/game.js';
+import createSubmenu from '../components/submenu.js';
 
 const renderLevel = (containerElement: HTMLElement, nono: Nonogram): void => {
   containerElement.innerHTML = '';
-  containerElement.appendChild(
-    createBackButtonElement(renderMenu.bind(null, containerElement))
-  );
   containerElement.appendChild(createGameElement(nono));
-  const saveButton = createButtonElement('Save', () => {
-    saveLevel(nono.encode(), 100);
-  });
-  containerElement.appendChild(saveButton);
+
+  const submenu = createSubmenu(nono.encode());
+
+  containerElement.appendChild(submenu);
 
   window.history.pushState(
     {},

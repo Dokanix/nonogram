@@ -1,16 +1,16 @@
-const deleteLevel = (boardHash: string): void => {
+const existsLevel = (boardHash: string): boolean => {
   const levelsJSON = localStorage.getItem('levels');
 
   if (!levelsJSON) {
-    return;
+    return false;
   }
   const levels = JSON.parse(levelsJSON) as { [key: string]: number };
 
   if (levels[boardHash] !== undefined) {
-    delete levels[boardHash];
+    return true;
   }
 
-  localStorage.setItem('levels', JSON.stringify(levels));
+  return false;
 };
 
-export default deleteLevel;
+export default existsLevel;

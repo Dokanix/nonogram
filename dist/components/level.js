@@ -8,7 +8,7 @@ const createLevelElement = (dimensions, bestTime, boardHash) => {
     const levelElement = createElement('div', 'level', ...[,], renderLevel.bind(null, containerElement, Nonogram.decode(boardHash)));
     levelElement.appendChild(createElement('div', 'level__dimensions', `${dimensions[0]} x ${dimensions[1]}`));
     levelElement.appendChild(createElement('div', 'level__bestTime', `${bestTime.toString()}s`));
-    levelElement.appendChild(createButtonElement('DEL', () => {
+    levelElement.appendChild(createButtonElement('DELETE', () => {
         deleteLevel(boardHash);
         levelElement.remove();
     }));

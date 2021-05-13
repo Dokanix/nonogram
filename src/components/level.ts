@@ -30,7 +30,7 @@ const createLevelElement = (
   );
 
   levelElement.appendChild(
-    createButtonElement('DEL', () => {
+    createButtonElement('DELETE', () => {
       deleteLevel(boardHash);
       levelElement.remove();
     })

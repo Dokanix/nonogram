@@ -29,7 +29,7 @@ nono = Nonogram.random(5);
 nono = Nonogram.random(4, 6);
 ```
 
-It also consists of methods used to encode and decode the board into a short string so you can share it easily without the need of a third-party server.
+It also consists of methods used to encode and decode the board into a short string so you can share it easily without the need of a database.
 
 ```js
 const nono = Nonogram.random();
