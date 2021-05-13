@@ -11,9 +11,8 @@ const createLevelsModal = (): HTMLDivElement => {
   ) as HTMLDivElement;
 
   const levelsString = localStorage.getItem('levels');
-  console.log(levelsString);
 
-  if (levelsString) {
+  if (levelsString && levelsString !== '{}') {
     const levels = JSON.parse(levelsString) as { [key: string]: number };
     console.log(levels);
 

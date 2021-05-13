@@ -6,8 +6,7 @@ const createLevelsModal = () => {
     const modalElement = createModal('Saved Levels');
     const modalBodyElement = modalElement.querySelector('.modal__body');
     const levelsString = localStorage.getItem('levels');
-    console.log(levelsString);
-    if (levelsString) {
+    if (levelsString && levelsString !== '{}') {
         const levels = JSON.parse(levelsString);
         console.log(levels);
         for (const level in levels) {
