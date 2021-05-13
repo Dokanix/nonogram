@@ -4,10 +4,14 @@ import renderLevel from './renderers/level.js';
 
 const containerElement = document.querySelector('.container')! as HTMLElement;
 
-if (window.location.search) {
-  const levelHash = window.location.search.slice(1);
-  const nono = Nonogram.decode(levelHash);
-  renderLevel(containerElement, nono);
-} else {
-  renderMenu(containerElement);
+try {
+  if (window.location.search) {
+    const levelHash = window.location.search.slice(1);
+    const nono = Nonogram.decode(levelHash);
+    renderLevel(containerElement, nono);
+  } else {
+    renderMenu(containerElement);
+  }
+} catch (e) {
+  localStorage.clear();
 }
