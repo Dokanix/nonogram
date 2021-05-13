@@ -71,7 +71,7 @@ nono.printBoard();
 
 ## Game
 
-The website ([Nonogram](dokanix.github.io/Nonogram)) is an implementation of the game with various features such as:
+The website ([Nonogram](https://dokanix.github.io/Nonogram)) is an implementation of the game with various features such as:
 
 - Playing a randomly sized level
 - Playing a level with hand picked size
