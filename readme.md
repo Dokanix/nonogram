@@ -59,7 +59,7 @@ The class also has getter methods for if you ever need to check its size, values
 ```js
 const [width, height] = nono.size;
 const solvedBoard = nono.cells;
-cons helpers = nono.helpers;
+const helpers = nono.helpers;
 ```
 
 Last but not least it has two public methods for printing the current board or solution into the console.
