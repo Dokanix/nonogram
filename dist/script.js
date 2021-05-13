@@ -351,10 +351,7 @@ const renderRandomLevel = (width, height) => {
     containerElement.innerHTML = '';
     containerElement.appendChild(createBackButtonElement(renderMenu));
     containerElement.appendChild(createGameElement(nono));
-    window.location.search = nono.encode();
-    nono.printSolution();
-    console.log(nono.encode());
-    Nonogram.decode(nono.encode()).printSolution();
+    window.history.pushState({}, 'Nonogram', `${window.location.pathname}?${nono.encode()}`);
 };
 const renderLevel = (nono) => {
     containerElement.innerHTML = '';
@@ -362,12 +359,13 @@ const renderLevel = (nono) => {
     containerElement.appendChild(createGameElement(nono));
 };
 const renderMenu = () => {
+    window.history.pushState({}, 'Nonogram', `${window.location.pathname}`);
     containerElement.innerHTML = '';
     containerElement.appendChild(createMenuElement());
 };
 if (window.location.search) {
-    const levelMap = window.location.search.slice(1);
-    const nono = Nonogram.decode(levelMap);
+    const levelHash = window.location.search.slice(1);
+    const nono = Nonogram.decode(levelHash);
     renderLevel(nono);
 }
 else {

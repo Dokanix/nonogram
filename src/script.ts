@@ -505,10 +505,11 @@ const renderRandomLevel = (width?: number, height?: number): void => {
   containerElement.appendChild(createBackButtonElement(renderMenu));
   containerElement.appendChild(createGameElement(nono));
 
-  window.location.search = nono.encode();
-  nono.printSolution();
-  console.log(nono.encode());
-  Nonogram.decode(nono.encode()).printSolution();
+  window.history.pushState(
+    {},
+    'Nonogram',
+    `${window.location.pathname}?${nono.encode()}`
+  );
 };
 
 const renderLevel = (nono: Nonogram): void => {
@@ -518,13 +519,14 @@ const renderLevel = (nono: Nonogram): void => {
 };
 
 const renderMenu = () => {
+  window.history.pushState({}, 'Nonogram', `${window.location.pathname}`);
   containerElement.innerHTML = '';
   containerElement.appendChild(createMenuElement());
 };
 
 if (window.location.search) {
-  const levelMap = window.location.search.slice(1);
-  const nono = Nonogram.decode(levelMap);
+  const levelHash = window.location.search.slice(1);
+  const nono = Nonogram.decode(levelHash);
   renderLevel(nono);
 } else {
   renderMenu();
