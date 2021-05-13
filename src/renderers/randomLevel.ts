@@ -1,7 +1,5 @@
 import Nonogram from '../nonogram.js';
-import createBackButtonElement from '../components/backButton.js';
-import createGameElement from '../components/game.js';
-import renderMenu from './menu.js';
+import renderLevel from './level.js';
 
 const renderRandomLevel = (
   containerElement: HTMLElement,
@@ -13,17 +11,7 @@ const renderRandomLevel = (
 
   const nono = Nonogram.random(width, height);
 
-  containerElement.innerHTML = '';
-  containerElement.appendChild(
-    createBackButtonElement(renderMenu.bind(null, containerElement))
-  );
-  containerElement.appendChild(createGameElement(nono));
-
-  window.history.pushState(
-    {},
-    'Nonogram',
-    `${window.location.pathname}?${nono.encode()}`
-  );
+  renderLevel(containerElement, nono);
 };
 
 export default renderRandomLevel;
