@@ -2,6 +2,7 @@ import renderMenu from '../renderers/menu.js';
 import createElement from '../utils/createElement.js';
 import createButtonElement from './button.js';
 import createSaveButton from './saveButton.js';
+import createShareModal from './shareModal.js';
 
 const createSubmenu = (boardHash: string) => {
   const containerElement = document.querySelector('.container') as HTMLElement;
@@ -16,7 +17,7 @@ const createSubmenu = (boardHash: string) => {
 
   container.appendChild(
     createButtonElement('Share', () => {
-      console.log('Sharing!');
+      containerElement.appendChild(createShareModal(boardHash));
     })
   );
 
