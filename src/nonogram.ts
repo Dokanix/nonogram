@@ -1,3 +1,5 @@
+const MAX_POWER = 8;
+
 interface Helpers {
   row: number[][];
   column: number[][];
@@ -24,7 +26,7 @@ export default class Nonogram {
   private columnHelpers: number[][] = [];
   private width: number = 2;
   private height: number = 2;
-  static maxSize = 20;
+  static maxSize = 10;
   static minSize = 2;
 
   constructor(solution: boolean[][]) {
@@ -91,7 +93,7 @@ export default class Nonogram {
 
   private validateSize(width: number, height: number = 5): void {
     if (
-      width < Nonogram.minSize ||
+      height < Nonogram.minSize ||
       height > Nonogram.maxSize ||
       width > Nonogram.maxSize ||
       width < Nonogram.minSize
@@ -311,12 +313,18 @@ export default class Nonogram {
     let gameHash = '';
 
     for (let row of this.solution) {
-      for (let cell of row) {
-        gameHash += cell ? '1' : '0';
-      }
-    }
+      let rowHash = '';
 
-    gameHash = parseInt(gameHash, 2).toString(36);
+      for (let cell of row) {
+        rowHash += cell ? '1' : '0';
+      }
+
+      let power = Math.ceil(Math.log(2 ** this.width) / Math.log(36));
+      console.log(power);
+
+      rowHash = parseInt(rowHash, 2).toString(36).padStart(power, '0');
+      gameHash += rowHash;
+    }
 
     urlQuery += gameHash;
     return urlQuery;
@@ -333,7 +341,6 @@ export default class Nonogram {
       throw new Error('URL needs to be in a number&number&hash format');
     }
 
-    console.log(urlQuery);
     let [w, h, hash] = urlQuery.split('&');
     let width = Number(w);
     let height = Number(h);
@@ -342,9 +349,16 @@ export default class Nonogram {
       .fill(null)
       .map(() => []);
 
-    const level = parseInt(hash, 36)
-      .toString(2)
-      .padStart(width * height, '0');
+    let level = '';
+
+    const power = Math.ceil(Math.log(2 ** width) / Math.log(36));
+    console.log(power);
+
+    for (let i = 0; i < height * power; i += power) {
+      level += parseInt(hash.slice(i, i + power), 36)
+        .toString(2)
+        .padStart(width, '0');
+    }
 
     for (let i = 0; i < height; i++) {
       for (let j = 0; j < width; j++) {

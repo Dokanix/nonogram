@@ -310,7 +310,10 @@ const createButtonElement = (text, callback) => {
     const button = document.createElement('button');
     button.textContent = text;
     if (callback) {
-        button.addEventListener('click', callback);
+        button.addEventListener('click', (event) => {
+            event.preventDefault();
+            callback();
+        });
     }
     button.addEventListener('click', () => {
         player.play('button');
@@ -349,6 +352,9 @@ const renderRandomLevel = (width, height) => {
     containerElement.appendChild(createBackButtonElement(renderMenu));
     containerElement.appendChild(createGameElement(nono));
     window.location.search = nono.encode();
+    nono.printSolution();
+    console.log(nono.encode());
+    Nonogram.decode(nono.encode()).printSolution();
 };
 const renderLevel = (nono) => {
     containerElement.innerHTML = '';
@@ -359,7 +365,6 @@ const renderMenu = () => {
     containerElement.innerHTML = '';
     containerElement.appendChild(createMenuElement());
 };
-console.log(window.location);
 if (window.location.search) {
     const levelMap = window.location.search.slice(1);
     const nono = Nonogram.decode(levelMap);

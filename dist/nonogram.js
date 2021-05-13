@@ -1,3 +1,4 @@
+const MAX_POWER = 8;
 function equals(left, right) {
     if (left.length !== right.length) {
         return false;
@@ -67,7 +68,7 @@ export default class Nonogram {
         };
     }
     validateSize(width, height = 5) {
-        if (width < Nonogram.minSize ||
+        if (height < Nonogram.minSize ||
             height > Nonogram.maxSize ||
             width > Nonogram.maxSize ||
             width < Nonogram.minSize) {
@@ -228,11 +229,15 @@ export default class Nonogram {
         let urlQuery = `${this.width}&${this.height}&`;
         let gameHash = '';
         for (let row of this.solution) {
+            let rowHash = '';
             for (let cell of row) {
-                gameHash += cell ? '1' : '0';
+                rowHash += cell ? '1' : '0';
             }
+            let power = Math.ceil(Math.log(Math.pow(2, this.width)) / Math.log(36));
+            console.log(power);
+            rowHash = parseInt(rowHash, 2).toString(36).padStart(power, '0');
+            gameHash += rowHash;
         }
-        gameHash = parseInt(gameHash, 2).toString(36);
         urlQuery += gameHash;
         return urlQuery;
     }
@@ -244,16 +249,20 @@ export default class Nonogram {
         if (!Nonogram.validUrl(urlQuery)) {
             throw new Error('URL needs to be in a number&number&hash format');
         }
-        console.log(urlQuery);
         let [w, h, hash] = urlQuery.split('&');
         let width = Number(w);
         let height = Number(h);
         let solution = Array(height)
             .fill(null)
             .map(() => []);
-        const level = parseInt(hash, 36)
-            .toString(2)
-            .padStart(width * height, '0');
+        let level = '';
+        const power = Math.ceil(Math.log(Math.pow(2, width)) / Math.log(36));
+        console.log(power);
+        for (let i = 0; i < height * power; i += power) {
+            level += parseInt(hash.slice(i, i + power), 36)
+                .toString(2)
+                .padStart(width, '0');
+        }
         for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
                 const index = i * width + j;
@@ -263,7 +272,7 @@ export default class Nonogram {
         return new Nonogram(solution);
     }
 }
-Nonogram.maxSize = 20;
+Nonogram.maxSize = 10;
 Nonogram.minSize = 2;
 let solution = [
     [true, false, true, true, true],

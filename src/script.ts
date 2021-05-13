@@ -443,7 +443,10 @@ const createButtonElement = (
   button.textContent = text;
 
   if (callback) {
-    button.addEventListener('click', callback);
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      callback();
+    });
   }
 
   button.addEventListener('click', () => {
@@ -503,6 +506,9 @@ const renderRandomLevel = (width?: number, height?: number): void => {
   containerElement.appendChild(createGameElement(nono));
 
   window.location.search = nono.encode();
+  nono.printSolution();
+  console.log(nono.encode());
+  Nonogram.decode(nono.encode()).printSolution();
 };
 
 const renderLevel = (nono: Nonogram): void => {
@@ -515,8 +521,6 @@ const renderMenu = () => {
   containerElement.innerHTML = '';
   containerElement.appendChild(createMenuElement());
 };
-
-console.log(window.location);
 
 if (window.location.search) {
   const levelMap = window.location.search.slice(1);
