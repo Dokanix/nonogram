@@ -4,7 +4,7 @@ This project is a web application allowing people to play, create and share thei
 
 ## About
 
-Nonogram, also known as Paint by Numbers or Picross is a logic puzzle game in which cells in a grid must be colored or left blank according to numbers at the side of the grid to reveal a hidden picture. ([Wikipedia])[https://en.wikipedia.org/wiki/Nonogram]
+Nonogram, also known as Paint by Numbers or Picross is a logic puzzle game in which cells in a grid must be colored or left blank according to numbers at the side of the grid to reveal a hidden picture. [Wikipedia](https://en.wikipedia.org/wiki/Nonogram)
 
 ## API
 
@@ -71,7 +71,7 @@ nono.printBoard();
 
 ## Game
 
-The website ((Nonogram)[dokanix.github.io/Nonogram]) is an implementation of the game with various features such as:
+The website ([Nonogram](dokanix.github.io/Nonogram)) is an implementation of the game with various features such as:
 
 - Playing a randomly sized level
 - Playing a level with hand picked size
