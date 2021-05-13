@@ -353,11 +353,6 @@ const renderRandomLevel = (width, height) => {
     containerElement.appendChild(createGameElement(nono));
     window.history.pushState({}, 'Nonogram', `${window.location.pathname}?${nono.encode()}`);
 };
-const renderLevel = (nono) => {
-    containerElement.innerHTML = '';
-    containerElement.appendChild(createBackButtonElement(renderMenu));
-    containerElement.appendChild(createGameElement(nono));
-};
 const renderMenu = () => {
     window.history.pushState({}, 'Nonogram', `${window.location.pathname}`);
     containerElement.innerHTML = '';

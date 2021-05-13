@@ -512,12 +512,6 @@ const renderRandomLevel = (width?: number, height?: number): void => {
   );
 };
 
-const renderLevel = (nono: Nonogram): void => {
-  containerElement.innerHTML = '';
-  containerElement.appendChild(createBackButtonElement(renderMenu));
-  containerElement.appendChild(createGameElement(nono));
-};
-
 const renderMenu = () => {
   window.history.pushState({}, 'Nonogram', `${window.location.pathname}`);
   containerElement.innerHTML = '';
