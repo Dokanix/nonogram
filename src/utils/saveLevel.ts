@@ -1,16 +1,17 @@
-import Nonogram from '../nonogram';
-
-type Level = boolean[][];
-
-const saveLevel = (nono: Nonogram): void => {
+const saveLevel = (boardHash: string, bestTime: number): void => {
   const levelsJSON = localStorage.getItem('levels');
 
   if (levelsJSON) {
-    const levels = JSON.parse(levelsJSON) as Level[];
-    levels.push(nono.cells);
+    const levels = JSON.parse(levelsJSON) as { [key: string]: number };
+
+    if (levels[boardHash]) {
+      return;
+    }
+
+    levels[boardHash] = bestTime;
     localStorage.setItem('levels', JSON.stringify(levels));
   } else {
-    localStorage.setItem('levels', JSON.stringify([nono.cells]));
+    localStorage.setItem('levels', JSON.stringify({ [boardHash]: bestTime }));
   }
 };
 

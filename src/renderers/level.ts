@@ -12,7 +12,7 @@ const renderLevel = (containerElement: HTMLElement, nono: Nonogram): void => {
   );
   containerElement.appendChild(createGameElement(nono));
   const saveButton = createButtonElement('Save', () => {
-    saveLevel(nono);
+    saveLevel(nono.encode(), 100);
   });
   containerElement.appendChild(saveButton);
 

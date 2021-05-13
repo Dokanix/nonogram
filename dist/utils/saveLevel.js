@@ -1,12 +1,15 @@
-const saveLevel = (nono) => {
+const saveLevel = (boardHash, bestTime) => {
     const levelsJSON = localStorage.getItem('levels');
     if (levelsJSON) {
         const levels = JSON.parse(levelsJSON);
-        levels.push(nono.cells);
+        if (levels[boardHash]) {
+            return;
+        }
+        levels[boardHash] = bestTime;
         localStorage.setItem('levels', JSON.stringify(levels));
     }
     else {
-        localStorage.setItem('levels', JSON.stringify([nono.cells]));
+        localStorage.setItem('levels', JSON.stringify({ [boardHash]: bestTime }));
     }
 };
 export default saveLevel;

@@ -403,3 +403,31 @@ body > * {
   box-shadow: none;
   filter: brightness(90%);
 }
+
+.level {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  align-items: center;
+  padding: 0.8rem;
+  font-size: 1.6rem;
+  grid-gap: 2.4rem;
+  transition: all 0.2s;
+  border-radius: 0.4rem;
+}
+
+.level:hover {
+  cursor: pointer;
+  transform: translateY(-1px);
+  background-color: var(--color-grayred);
+}
+
+.level button {
+  border: none;
+  font-weight: bold;
+  padding: 0.8rem 1.6rem;
+  border-radius: 0.4rem;
+}
+
+.level:hover button {
+  opacity: 1;
+}

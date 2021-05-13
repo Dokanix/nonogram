@@ -8,7 +8,7 @@ const renderLevel = (containerElement, nono) => {
     containerElement.appendChild(createBackButtonElement(renderMenu.bind(null, containerElement)));
     containerElement.appendChild(createGameElement(nono));
     const saveButton = createButtonElement('Save', () => {
-        saveLevel(nono);
+        saveLevel(nono.encode(), 100);
     });
     containerElement.appendChild(saveButton);
     window.history.pushState({}, 'Nonogram', `${window.location.pathname}?${nono.encode()}`);

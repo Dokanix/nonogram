@@ -3,6 +3,7 @@ import player from '../AudioPlayer.js';
 import getElementPosition from '../utils/getElementPosition.js';
 import createCellElement from './cell.js';
 import createWinModal from './winModal.js';
+import updateLevel from '../utils/updateLevel.js';
 let mouseDown = false;
 document.addEventListener('mousedown', (e) => {
     if (e.button === 0) {
@@ -33,6 +34,7 @@ const createBoardElement = (nono) => {
         }
         if (nono.solved) {
             const totalTime = Math.floor((new Date().getTime() - startTime) / 1000);
+            updateLevel(nono.encode(), totalTime);
             player.play('win');
             const containerElement = document.querySelector('.container');
             containerElement.appendChild(createWinModal(totalTime));

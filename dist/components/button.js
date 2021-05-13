@@ -6,6 +6,7 @@ const createButtonElement = (text, callback) => {
         button.addEventListener('click', (event) => {
             event.preventDefault();
             callback();
+            event.stopPropagation();
         });
     }
     button.addEventListener('click', () => {

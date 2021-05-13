@@ -11,6 +11,7 @@ const createButtonElement = (
     button.addEventListener('click', (event) => {
       event.preventDefault();
       callback();
+      event.stopPropagation();
     });
   }
 

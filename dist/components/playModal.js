@@ -9,11 +9,8 @@ const createPlayModal = () => {
         width: 3,
         height: 3,
     };
-    const modalElement = createModal('Level Settings');
+    const modalElement = createModal('Choose Board Size');
     const modalBodyElement = modalElement.querySelector('.modal__body');
-    const boardHeaderElement = document.createElement('h2');
-    boardHeaderElement.textContent = 'Choose board size';
-    modalBodyElement.appendChild(boardHeaderElement);
     const boardSelectorElement = document.createElement('div');
     boardSelectorElement.classList.add('boardSelector');
     let boardElement = createBoardSelector(dimensions);

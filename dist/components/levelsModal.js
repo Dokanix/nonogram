@@ -1,23 +1,18 @@
-import Nonogram from '../nonogram.js';
 import createModal from './modal.js';
-import createButtonElement from './button.js';
-import renderLevel from '../renderers/level.js';
+import createLevelElement from './level.js';
 const createLevelsModal = () => {
     const containerElement = document.querySelector('.container');
     const modalElement = createModal('Saved Levels');
     const modalBodyElement = modalElement.querySelector('.modal__body');
     const levelsString = localStorage.getItem('levels');
+    console.log(levelsString);
     if (levelsString) {
         const levels = JSON.parse(levelsString);
         console.log(levels);
-        for (const level of levels) {
-            const height = level.length;
-            const width = level[0].length;
-            const thumbnail = createButtonElement(`${height} x ${width}`, () => {
-                const nono = new Nonogram(level);
-                renderLevel(containerElement, nono);
-            });
-            modalBodyElement.appendChild(thumbnail);
+        for (const level in levels) {
+            const [width, height] = level.split('&');
+            const levelElement = createLevelElement([Number(width), Number(height)], levels[level], level);
+            modalBodyElement.appendChild(levelElement);
         }
     }
     return modalElement;
