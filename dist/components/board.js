@@ -24,6 +24,7 @@ document.addEventListener('wheel', (e) => {
     }
 });
 const createBoardElement = (nono) => {
+    currentScale = 1;
     const startTime = new Date().getTime();
     const checkIfSolved = (column, row) => {
         if (nono.solvedRow(row)) {

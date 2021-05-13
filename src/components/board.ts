@@ -39,6 +39,7 @@ document.addEventListener('wheel', (e) => {
 });
 
 const createBoardElement = (nono: Nonogram): HTMLDivElement => {
+  currentScale = 1;
   const startTime = new Date().getTime();
 
   const checkIfSolved = (column: number, row: number) => {
