@@ -1,4 +1,3 @@
-const MAX_POWER = 8;
 function equals(left, right) {
     if (left.length !== right.length) {
         return false;

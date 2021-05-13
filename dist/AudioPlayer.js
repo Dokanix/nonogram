@@ -29,4 +29,4 @@ class AudioPlayer {
     }
 }
 _muted = new WeakMap();
-export default AudioPlayer;
+export default new AudioPlayer();

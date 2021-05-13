@@ -18,4 +18,4 @@ class AudioPlayer {
   }
 }
 
-export default AudioPlayer;
+export default new AudioPlayer();

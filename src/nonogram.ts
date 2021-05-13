@@ -1,5 +1,3 @@
-const MAX_POWER = 8;
-
 interface Helpers {
   row: number[][];
   column: number[][];
