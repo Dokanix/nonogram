@@ -233,8 +233,8 @@ export default class Nonogram {
             for (let cell of row) {
                 rowHash += cell ? '1' : '0';
             }
+            // Calculates max base 36 chars needed to describe the row for the given board width, ie. smallest 36^x that is greater than 2^width
             let power = Math.ceil(Math.log(Math.pow(2, this.width)) / Math.log(36));
-            console.log(power);
             rowHash = parseInt(rowHash, 2).toString(36).padStart(power, '0');
             gameHash += rowHash;
         }
@@ -257,7 +257,6 @@ export default class Nonogram {
             .map(() => []);
         let level = '';
         const power = Math.ceil(Math.log(Math.pow(2, width)) / Math.log(36));
-        console.log(power);
         for (let i = 0; i < height * power; i += power) {
             level += parseInt(hash.slice(i, i + power), 36)
                 .toString(2)
