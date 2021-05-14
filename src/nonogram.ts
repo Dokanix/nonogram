@@ -329,7 +329,7 @@ export default class Nonogram {
   }
 
   static validUrl(urlQuery: string): boolean {
-    const regex = /^[1-9]|10&[1-9]|10&[a-zA-Z]+$/;
+    const regex = /^\d+&\d+&\w+$/;
 
     return regex.test(urlQuery);
   }

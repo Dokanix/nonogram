@@ -241,7 +241,7 @@ export default class Nonogram {
         return urlQuery;
     }
     static validUrl(urlQuery) {
-        const regex = /^[1-9]|10&[1-9]|10&[a-zA-Z]+$/;
+        const regex = /^\d+&\d+&\w+$/;
         return regex.test(urlQuery);
     }
     static decode(urlQuery) {
