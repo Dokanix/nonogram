@@ -24,7 +24,7 @@ export default class Nonogram {
   private columnHelpers: number[][] = [];
   private width: number = 2;
   private height: number = 2;
-  static maxSize = 10;
+  static maxSize = 20;
   static minSize = 2;
 
   constructor(solution: boolean[][]) {

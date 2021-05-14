@@ -56,7 +56,11 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
       updateLevel(nono.encode(), totalTime);
       player.play('win');
       const containerElement = document.querySelector('.container')!;
-      containerElement.appendChild(createWinModal(totalTime));
+
+      if (!containerElement.querySelector('.modal')) {
+        containerElement.appendChild(createWinModal(totalTime));
+      }
+
       const focusTarget = document.querySelector(
         '.modal__button--secondary'
       ) as HTMLDivElement;
@@ -181,9 +185,11 @@ const createBoardElement = (nono: Nonogram): HTMLDivElement => {
   boardElement.classList.add('board');
   boardElement.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
 
+  const cellSize = `min(calc(70vh/${height}), calc(70vw/${width}), 10rem)`;
+
   for (let i = 0; i < height; i++) {
     for (let j = 0; j < width; j++) {
-      boardElement.appendChild(createCellElement(i, j));
+      boardElement.appendChild(createCellElement(i, j, cellSize));
     }
   }
 

@@ -1,8 +1,12 @@
 import createButtonElement from './button.js';
 import removeElement from '../utils/removeElement.js';
+import createElement from '../utils/createElement.js';
 const createModal = (header, text) => {
-    const modalElement = document.createElement('div');
-    modalElement.classList.add('modal');
+    const modalElement = createElement('div', 'modal', ...[,], (event) => {
+        if (!event.target.closest('.modal__body')) {
+            modalElement.remove();
+        }
+    });
     const modalBodyElement = document.createElement('div');
     modalBodyElement.classList.add('modal__body');
     const modalExitButton = createButtonElement('X', () => {

@@ -418,7 +418,7 @@ body > * {
   display: flex;
   flex-direction: column;
   width: 24rem;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   background-image: linear-gradient(

@@ -2,7 +2,7 @@ const createElement = (
   tagName: keyof HTMLElementTagNameMap,
   className: string,
   text?: string,
-  callback?: () => void
+  callback?: (event: Event) => void
 ): HTMLElement => {
   const element = document.createElement(tagName);
   element.classList.add(className);
@@ -14,7 +14,7 @@ const createElement = (
   if (callback) {
     element.addEventListener('click', (event) => {
       event.preventDefault();
-      callback();
+      callback(event);
     });
   }
 

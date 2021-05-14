@@ -7,7 +7,7 @@ const createElement = (tagName, className, text, callback) => {
     if (callback) {
         element.addEventListener('click', (event) => {
             event.preventDefault();
-            callback();
+            callback(event);
         });
     }
     return element;

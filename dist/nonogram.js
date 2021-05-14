@@ -270,7 +270,7 @@ export default class Nonogram {
         return new Nonogram(solution);
     }
 }
-Nonogram.maxSize = 10;
+Nonogram.maxSize = 20;
 Nonogram.minSize = 2;
 let solution = [
     [true, false, true, true, true],

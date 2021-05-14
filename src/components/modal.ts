@@ -1,9 +1,13 @@
 import createButtonElement from './button.js';
 import removeElement from '../utils/removeElement.js';
+import createElement from '../utils/createElement.js';
 
 const createModal = (header: string, text?: string): HTMLDivElement => {
-  const modalElement = document.createElement('div');
-  modalElement.classList.add('modal');
+  const modalElement = createElement('div', 'modal', ...[,], (event) => {
+    if (!(event.target as Element).closest('.modal__body')) {
+      modalElement.remove();
+    }
+  }) as HTMLDivElement;
 
   const modalBodyElement = document.createElement('div');
   modalBodyElement.classList.add('modal__body');
