@@ -78,3 +78,5 @@ The website ([Nonogram](https://dokanix.github.io/nonogram)) is an implementatio
 - Saving and replaying your favourite levels
 - Sharing levels via a generated URL
 - Creating your own custom levels (TO-DO)
+
+It is a Single Page Application made without any third party frameworks or reactive libraries. It is made with TypeScript and makes use of the HTML5 History API to render levels based on the current URL.
