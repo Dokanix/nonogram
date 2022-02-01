@@ -1,6 +1,6 @@
 # Nonogram
 
-This project is a web application allowing people to play, create and share their favourite Nonogram levels.
+This project is a web application allowing people to play, create and share their favourite Nonogram levels. Play it now [here](https://dokanix.github.io/nonogram).
 
 ## About
 
